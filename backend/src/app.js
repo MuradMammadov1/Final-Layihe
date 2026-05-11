@@ -2,20 +2,26 @@ const express = require('express');
 const cors = require('cors');
 const logger = require('./middleware/loggerMiddleware'); // 
 const { errorHandler } = require('./middleware/errorMiddleware'); // 
+const authRoutes = require('./routes/authRoutes');
+const hotelRoutes = require('./routes/hotelRoutes');
 
 const app = express();
 
-// Standart Middleware
 app.use(cors());
 app.use(express.json());
-app.use(logger); // Hər bir istəyi log edir 
+app.use(logger); // Bütün istəkləri konsolda göstərir 
 
-// Test Route
-app.get('/', (req, res) => {
-    res.send('Aura Grand Hotel API Hazırdır!');
+// API Yolları 
+app.use('/api/auth', authRoutes);
+app.use('/api/hotels', hotelRoutes);
+
+// Əgər heç bir route tapılmazsa (404)
+app.use((req, res, next) => {
+    res.status(404);
+    next(new Error(`Tapılmadı - ${req.originalUrl}`));
 });
 
-// Global Error Handler (Həmişə route-lardan sonra gəlməlidir)
-app.use(errorHandler); // 
+// Global Error Handler 
+app.use(errorHandler);
 
 module.exports = app;
