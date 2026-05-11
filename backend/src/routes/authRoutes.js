@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { register, login } = require('../controllers/authController');
 
-router.post('/register', (req, res) => {
-    res.json({ message: "Qeydiyyat bölməsi" });
-});
+router.post('/register', register);
+router.post('/login', login); // Login endpointi
 
-module.exports = router; // BU SƏTİR MÜTLƏQDİR! [cite: 7, 52]
+module.exports = router;
