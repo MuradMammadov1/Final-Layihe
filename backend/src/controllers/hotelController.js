@@ -1,5 +1,6 @@
 const Hotel = require('../models/Hotel');
 
+// @desc    Bütün otelləri gətir
 exports.getHotels = async (req, res, next) => {
     try {
         const hotels = await Hotel.find();
@@ -7,6 +8,7 @@ exports.getHotels = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+// @desc    Tək bir oteli ID ilə gətir
 exports.getHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.findById(req.params.id);
@@ -15,6 +17,7 @@ exports.getHotel = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+// @desc    Yeni otel yarat (Admin)
 exports.createHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.create(req.body);
@@ -22,7 +25,7 @@ exports.createHotel = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
-// BU ƏSKİK İDİ:
+// @desc    Oteli yenilə (Admin)
 exports.updateHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body, {
@@ -34,6 +37,7 @@ exports.updateHotel = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+// @desc    Oteli sil (Admin)
 exports.deleteHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.findByIdAndDelete(req.params.id);

@@ -1,10 +1,11 @@
 const Reservation = require('../models/Reservation');
 
+// @desc    Rezervasiya et
 exports.makeReservation = async (req, res, next) => {
     try {
         const { hotelId, checkIn, checkOut, totalPrice } = req.body;
         const reservation = await Reservation.create({
-            user: req.user._id || req.user.id, 
+            user: req.user._id || req.user.id,
             hotel: hotelId,
             checkIn,
             checkOut,
@@ -14,6 +15,7 @@ exports.makeReservation = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+// @desc    İstifadəçinin öz rezervasiyalarını gətir
 exports.getMyReservations = async (req, res, next) => {
     try {
         const reservations = await Reservation.find({ 
@@ -23,15 +25,15 @@ exports.getMyReservations = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
-// BU ƏSKİK İDİ:
+// @desc    Rezervasiyanı ləğv et
 exports.cancelReservation = async (req, res, next) => {
     try {
         const reservation = await Reservation.findById(req.params.id);
         if (!reservation) return res.status(404).json({ success: false, message: "Rezervasiya tapılmadı" });
 
-        // Yalnız rezervasiya edən şəxs silə bilsin
+        // Təhlükəsizlik yoxlanışı
         if (reservation.user.toString() !== (req.user._id || req.user.id).toString()) {
-            return res.status(401).json({ success: false, message: "Buna icazəniz yoxdur" });
+            return res.status(401).json({ success: false, message: "Bu rezervasiyanı silməyə ixtiyarınız yoxdur" });
         }
 
         await reservation.deleteOne();
