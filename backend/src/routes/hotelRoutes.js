@@ -1,9 +1,9 @@
 const express = require('express');
+const { getHotels, createHotel } = require('../controllers/hotelController');
+const { protect, admin } = require('../middleware/authMiddleware');
 const router = express.Router();
 
-// Test üçün sadə bir GET route
-router.get('/', (req, res) => {
-    res.json({ message: "Hotellər siyahısı" });
-});
+router.get('/', getHotels);
+router.post('/', protect, admin, createHotel); // Yalnız admin hotel yarada bilər
 
-module.exports = router; // BU SƏTİR MÜTLƏQDİR!
+module.exports = router;

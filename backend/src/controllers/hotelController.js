@@ -4,18 +4,13 @@ exports.getHotels = async (req, res, next) => {
     try {
         const { city, minPrice, maxPrice, search } = req.query;
         let query = {};
-
         if (city) query.city = city;
-        if (minPrice || maxPrice) {
-            query.price = { $gte: minPrice || 0, $lte: maxPrice || Infinity };
-        }
         if (search) query.name = { $regex: search, $options: 'i' };
+        if (minPrice || maxPrice) {
+            query.price = { $gte: Number(minPrice) || 0, $lte: Number(maxPrice) || Infinity };
+        }
 
-        const page = Number(req.query.page) || 1;
-        const limit = 10;
-        const skip = (page - 1) * limit;
-
-        const hotels = await Hotel.find(query).limit(limit).skip(skip);
+        const hotels = await Hotel.find(query);
         res.json(hotels);
     } catch (error) { next(error); }
 };

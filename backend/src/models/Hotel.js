@@ -5,7 +5,7 @@ const hotelSchema = new mongoose.Schema({
     city: { type: String, required: true },
     price: { type: Number, required: true },
     description: { type: String },
-    images: [String],
+    images: [String], // Cloudinary-dən gələn linklər
     rating: { type: Number, default: 0 },
     amenities: [String]
 }, { timestamps: true });
