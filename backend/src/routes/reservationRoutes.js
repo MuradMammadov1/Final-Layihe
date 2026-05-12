@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { makeReservation, getMyReservations } = require('../controllers/reservationController');
-const { protect } = require('../middleware/authMiddleware'); // Middleware adını yoxla
+const { makeReservation, getMyReservations, cancelReservation } = require('../controllers/reservationController');
+const { protect } = require('../middleware/authMiddleware');
 
-// Giriş etməyən istifadəçi rezervasiya edə bilməz
-router.post('/', protect, makeReservation);
-router.get('/my', protect, getMyReservations);
+// POST: Rezervasiya et | GET: Siyahını gör
+router.route('/')
+    .post(protect, makeReservation)
+    .get(protect, getMyReservations);
+
+// DELETE: Rezervasiyanı ləğv et
+router.delete('/:id', protect, cancelReservation);
 
 module.exports = router;

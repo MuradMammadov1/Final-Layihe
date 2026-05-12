@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    getHotels, 
-    getHotel, 
-    createHotel, 
-    deleteHotel 
-} = require('../controllers/hotelController');
+const { getHotels, getHotel, createHotel, updateHotel, deleteHotel } = require('../controllers/hotelController');
+const { protect } = require('../middleware/authMiddleware');
 
-// Bütün marşrutlar burada təyin olunmalıdır
-router.get('/', getHotels);
-router.get('/:id', getHotel);
-router.post('/', createHotel); // Real layihədə bura admin qoruması əlavə ediləcək
-router.delete('/:id', deleteHotel);
+router.route('/')
+    .get(getHotels)
+    .post(protect, createHotel); // Yalnız daxil olanlar (və ya Admin) yarada bilsin
+
+router.route('/:id')
+    .get(getHotel)
+    .put(protect, updateHotel)
+    .delete(protect, deleteHotel);
 
 module.exports = router;
