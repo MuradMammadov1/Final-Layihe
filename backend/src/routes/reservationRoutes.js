@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware');
+const { makeReservation, getMyReservations } = require('../controllers/reservationController');
+const { protect } = require('../middleware/authMiddleware'); // Middleware adını yoxla
 
-// Hələlik test üçün sadə bir route
-router.post('/', protect, (req, res) => {
-    res.json({ message: "Rezervasiya sistemi aktivdir" });
-});
+// Giriş etməyən istifadəçi rezervasiya edə bilməz
+router.post('/', protect, makeReservation);
+router.get('/my', protect, getMyReservations);
 
-module.exports = router; // BAX BU SƏTİR ÇOX VACİBDİR!
+module.exports = router;

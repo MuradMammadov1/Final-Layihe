@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const protect = async (req, res, next) => {
+exports.protect = async (req, res, next) => {
     let token;
+
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
             token = req.headers.authorization.split(' ')[1];
@@ -10,15 +11,13 @@ const protect = async (req, res, next) => {
             req.user = await User.findById(decoded.id).select('-password');
             next();
         } catch (error) {
-            res.status(401).json({ message: 'Token səhvdir' });
+            res.status(401);
+            next(new Error('Yetki yoxdur, token səhvdir'));
         }
     }
-    if (!token) res.status(401).json({ message: 'Giriş üçün token lazımdır' });
-};
 
-const admin = (req, res, next) => {
-    if (req.user && req.user.role === 'admin') next();
-    else res.status(403).json({ message: 'Bu əməliyyat üçün Admin yetkisi lazımdır' });
+    if (!token) {
+        res.status(401);
+        next(new Error('Yetki yoxdur, token tapılmadı'));
+    }
 };
-
-module.exports = { protect, admin };

@@ -1,47 +1,69 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const logger = require('./middleware/loggerMiddleware');
 const { errorHandler } = require('./middleware/errorMiddleware');
+
+// Route-ların importu
 const authRoutes = require('./routes/authRoutes');
 const hotelRoutes = require('./routes/hotelRoutes');
+const reservationRoutes = require('./routes/reservationRoutes'); 
+const reviewRoutes = require('./routes/reviewRoutes');
 
 const app = express();
 
-// Standart Middleware-lər
+// --- Middleware-lər ---
 app.use(cors());
-app.use(express.json());
-app.use(logger); // Hər bir müraciəti terminalda göstərir
+// JSON və Form məlumatlarını oxumaq üçün (Undefined xətalarına qarşı)
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(logger);
 
-// --- ƏLAVƏ EDİLDİ: Brauzerdə görmək üçün test route-ları ---
+// Statik fayllar (Şəkillər üçün)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// 1. Ana Səhifə (http://localhost:5000/)
+// --- 1. ANA SƏHİFƏ ---
 app.get('/', (req, res) => {
-    res.status(200).send('<h1>Aura Grand Hotel API işləyir...</h1><p>API-dan istifadə etmək üçün <b>/api/hotels</b> ünvanına gedin.</p>');
+    res.status(200).send(`
+        <div style="font-family: sans-serif; padding: 40px; text-align: center; background-color: #f4f7f6; min-height: 80vh;">
+            <h1 style="color: #2c3e50; font-size: 3rem;">🏨 Aura Grand Hotel</h1>
+            <p style="color: #27ae60; font-size: 1.2rem; font-weight: bold;">Backend Server Aktivdir</p>
+            <hr style="width: 50%; margin: 20px auto;">
+            <p style="color: #7f8c8d;">API detalları üçün <a style="color: #3498db; text-decoration: none;" href="/api">/api</a> ünvanına keçin.</p>
+        </div>
+    `);
 });
 
-// 2. API Haqqında Ümumi Məlumat (http://localhost:5000/api)
+// --- 2. API DETALLARI (Frontend üçün bələdçi) ---
 app.get('/api', (req, res) => {
     res.json({
         project: "Aura Grand Hotel",
-        version: "1.0.0",
         status: "Active",
-        endpoints: ["/api/auth", "/api/hotels", "/api/reservations"]
+        author: "Murad Məmmədov",
+        endpoints: {
+            auth: ["POST /api/auth/register", "POST /api/auth/login"],
+            hotels: ["GET /api/hotels", "GET /api/hotels/:id", "POST /api/hotels (Admin)"],
+            reservations: ["POST /api/reservations (Protect)", "GET /api/reservations/my (Protect)"],
+            reviews: ["POST /api/reviews (Protect)", "GET /api/reviews/:hotelId"]
+        }
     });
 });
 
-// ---------------------------------------------------------
-
-// Marşrutlar (Routes)
+// --- 3. MARŞRUTLARIN QOŞULMASI ---
+// Bütün yazdığın route faylları burada mərkəzləşir
 app.use('/api/auth', authRoutes);
 app.use('/api/hotels', hotelRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/reviews', reviewRoutes);
 
-// Əgər səhv ünvan yazılarsa (404 Error Handler)
+// --- 4. XƏTA İDARƏETMƏSİ ---
+// Yanlış ünvan yazıldıqda (404)
 app.use((req, res, next) => {
     res.status(404);
     next(new Error(`Tapılmadı - ${req.originalUrl}`));
 });
 
-// Global Error Handler (Xətaları tutub JSON formatında qaytarır)
+// Ümumi xəta tutucu (500)
 app.use(errorHandler);
 
 module.exports = app;

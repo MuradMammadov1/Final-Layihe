@@ -2,22 +2,30 @@ const Hotel = require('../models/Hotel');
 
 exports.getHotels = async (req, res, next) => {
     try {
-        const { city, minPrice, maxPrice, search } = req.query;
-        let query = {};
-        if (city) query.city = city;
-        if (search) query.name = { $regex: search, $options: 'i' };
-        if (minPrice || maxPrice) {
-            query.price = { $gte: Number(minPrice) || 0, $lte: Number(maxPrice) || Infinity };
-        }
+        const hotels = await Hotel.find();
+        res.status(200).json({ success: true, count: hotels.length, data: hotels });
+    } catch (error) { next(error); }
+};
 
-        const hotels = await Hotel.find(query);
-        res.json(hotels);
+exports.getHotel = async (req, res, next) => {
+    try {
+        const hotel = await Hotel.findById(req.params.id);
+        if (!hotel) return res.status(404).json({ message: "Otel tapılmadı" });
+        res.status(200).json({ success: true, data: hotel });
     } catch (error) { next(error); }
 };
 
 exports.createHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.create(req.body);
-        res.status(201).json(hotel);
+        res.status(201).json({ success: true, data: hotel });
+    } catch (error) { next(error); }
+};
+
+exports.deleteHotel = async (req, res, next) => {
+    try {
+        const hotel = await Hotel.findByIdAndDelete(req.params.id);
+        if (!hotel) return res.status(404).json({ message: "Otel tapılmadı" });
+        res.json({ message: "Otel uğurla silindi" });
     } catch (error) { next(error); }
 };
