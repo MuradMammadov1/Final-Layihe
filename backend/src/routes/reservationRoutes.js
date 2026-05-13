@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { makeReservation, getMyReservations, cancelReservation } = require('../controllers/reservationController');
+const { 
+    makeReservation, 
+    getMyReservations, 
+    cancelReservation 
+} = require('../controllers/reservationController');
 const { protect } = require('../middleware/authMiddleware');
 
-// POST: Rezervasiya et | GET: Siyahını gör
+// /api/reservations
 router.route('/')
-    .post(protect, makeReservation)
-    .get(protect, getMyReservations);
+    .post(protect, makeReservation) // Rezervasiya et
+    .get(protect, getMyReservations); // Öz rezervasiyalarına bax
 
-// DELETE: Rezervasiyanı ləğv et
-router.delete('/:id', protect, cancelReservation);
+// /api/reservations/:id
+router.delete('/:id', protect, cancelReservation); // Rezervasiyanı ləğv et
 
 module.exports = router;

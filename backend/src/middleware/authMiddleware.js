@@ -21,3 +21,16 @@ exports.protect = async (req, res, next) => {
         next(new Error('Yetki yoxdur, token tapılmadı'));
     }
 };
+
+// YENİ: Role yoxlanışı (Admin üçün)
+exports.authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ 
+                success: false, 
+                message: `Sizin rolunuz (${req.user.role}) bu əməliyyata icazə vermir.` 
+            });
+        }
+        next();
+    };
+};

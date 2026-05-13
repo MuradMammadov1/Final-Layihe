@@ -1,20 +1,17 @@
 const Review = require('../models/Review');
 
-// @desc    Rəy yaz
+// POST - Rəy yaz
 exports.addReview = async (req, res, next) => {
     try {
-        const { hotelId, rating, comment } = req.body;
         const review = await Review.create({
-            user: req.user._id || req.user.id,
-            hotel: hotelId,
-            rating,
-            comment
+            ...req.body,
+            user: req.user._id || req.user.id
         });
         res.status(201).json({ success: true, data: review });
     } catch (error) { next(error); }
 };
 
-// @desc    Otelin rəylərini gətir
+// GET - Otel rəyləri
 exports.getHotelReviews = async (req, res, next) => {
     try {
         const reviews = await Review.find({ hotel: req.params.hotelId }).populate('user', 'name');
@@ -22,7 +19,7 @@ exports.getHotelReviews = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
-// @desc    Rəyi sil
+// DELETE - Rəyi sil
 exports.deleteReview = async (req, res, next) => {
     try {
         const review = await Review.findById(req.params.id);
@@ -33,6 +30,6 @@ exports.deleteReview = async (req, res, next) => {
         }
 
         await review.deleteOne();
-        res.status(200).json({ success: true, message: "Rəy uğurla silindi" });
+        res.status(200).json({ success: true, message: "Rəy silindi" });
     } catch (error) { next(error); }
 };

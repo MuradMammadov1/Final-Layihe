@@ -1,23 +1,21 @@
 const Hotel = require('../models/Hotel');
 
-// @desc    Bütün otelləri gətir
 exports.getHotels = async (req, res, next) => {
     try {
-        const hotels = await Hotel.find();
+        // Otelləri gətirəndə onlara yazılan rəyləri də göstərsin
+        const hotels = await Hotel.find().populate('reviews');
         res.status(200).json({ success: true, count: hotels.length, data: hotels });
     } catch (error) { next(error); }
 };
 
-// @desc    Tək bir oteli ID ilə gətir
 exports.getHotel = async (req, res, next) => {
     try {
-        const hotel = await Hotel.findById(req.params.id);
+        const hotel = await Hotel.findById(req.params.id).populate('reviews');
         if (!hotel) return res.status(404).json({ success: false, message: "Otel tapılmadı" });
         res.status(200).json({ success: true, data: hotel });
     } catch (error) { next(error); }
 };
 
-// @desc    Yeni otel yarat (Admin)
 exports.createHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.create(req.body);
@@ -25,7 +23,6 @@ exports.createHotel = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
-// @desc    Oteli yenilə (Admin)
 exports.updateHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.findByIdAndUpdate(req.params.id, req.body, {
@@ -37,11 +34,10 @@ exports.updateHotel = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
-// @desc    Oteli sil (Admin)
 exports.deleteHotel = async (req, res, next) => {
     try {
         const hotel = await Hotel.findByIdAndDelete(req.params.id);
         if (!hotel) return res.status(404).json({ success: false, message: "Otel tapılmadı" });
-        res.status(200).json({ success: true, message: "Otel uğurla silindi" });
+        res.status(200).json({ success: true, message: "Otel silindi" });
     } catch (error) { next(error); }
 };
