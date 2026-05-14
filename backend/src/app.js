@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const hotelRoutes = require('./routes/hotelRoutes');
 const reservationRoutes = require('./routes/reservationRoutes'); 
 const reviewRoutes = require('./routes/reviewRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes');
 
 const app = express();
 
@@ -66,8 +67,9 @@ app.get('/api', (req, res) => {
 // --- 3. MARŞRUTLARIN QOŞULMASI ---
 app.use('/api/auth', authRoutes);
 app.use('/api/hotels', hotelRoutes);
-app.use('/api/reservations', reservationRoutes);
-app.use('/api/reviews', reviewRoutes);
+app.use('/api/reservation', reservationRoutes);
+app.use('/api/review', reviewRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
 // --- 4. XƏTA İDARƏETMƏSİ ---
 app.use((req, res, next) => {

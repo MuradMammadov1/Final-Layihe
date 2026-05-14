@@ -1,4 +1,5 @@
 const Review = require('../models/Review');
+const Hotel = require('../models/Hotel');
 
 // POST - Rəy yaz
 exports.addReview = async (req, res, next) => {
@@ -7,6 +8,12 @@ exports.addReview = async (req, res, next) => {
             ...req.body,
             user: req.user._id || req.user.id
         });
+
+        // Otelin rating-ini yenilə
+        const reviews = await Review.find({ hotel: req.body.hotel });
+        const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+        await Hotel.findByIdAndUpdate(req.body.hotel, { rating: avgRating.toFixed(1) });
+
         res.status(201).json({ success: true, data: review });
     } catch (error) { next(error); }
 };
