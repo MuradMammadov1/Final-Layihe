@@ -18,13 +18,13 @@ router.route('/')
     .get(getHotels) // Hamı baxa bilər (Giriş tələb olunmur)
     .post(protect, authorize('admin'), upload.array('images', 5), createHotel); // Yalnız Admin otel yarada bilər
 
+// /api/hotels/stats
+router.get('/stats', protect, authorize('admin'), getStats); // Admin statistikaları
+
 // /api/hotels/:id
 router.route('/:id')
     .get(getHotel) // Hamı baxa bilər
     .put(protect, authorize('admin'), upload.array('images', 5), updateHotel) // Yalnız Admin yeniləyə bilər
     .delete(protect, authorize('admin'), deleteHotel); // Yalnız Admin silə bilər (TƏHLÜKƏSİZ!)
-
-// /api/hotels/stats
-router.get('/stats', protect, authorize('admin'), getStats); // Admin statistikaları
 
 module.exports = router;

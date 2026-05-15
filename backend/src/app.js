@@ -7,9 +7,10 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 // Route-ların importu
 const authRoutes = require('./routes/authRoutes');
 const hotelRoutes = require('./routes/hotelRoutes');
-const reservationRoutes = require('./routes/reservationRoutes'); 
+const reservationRoutes = require('./routes/reservationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
+const roomRoutes = require('./routes/roomRoutes');
 
 const app = express();
 
@@ -42,23 +43,38 @@ app.get('/api', (req, res) => {
         status: "Active",
         author: "Murad Məmmədov",
         endpoints: {
-            auth: ["POST /api/auth/register", "POST /api/auth/login"],
+            auth: ["POST /api/auth/register", "POST /api/auth/login", "POST /register", "POST /login"],
             hotels: [
                 "GET /api/hotels", 
                 "GET /api/hotels/:id", 
                 "POST /api/hotels (Admin)",
                 "PUT /api/hotels/:id (Admin)",
-                "DELETE /api/hotels/:id (Admin)"
+                "DELETE /api/hotels/:id (Admin)",
+                "GET /api/hotels/:id?startDate=...&endDate=..."
+            ],
+            rooms: [
+                "POST /api/rooms (Admin)",
+                "GET /api/rooms/:id",
+                "PUT /api/rooms/:id (Admin)",
+                "DELETE /api/rooms/:id (Admin)",
+                "GET /api/rooms/hotel/:hotelId"
             ],
             reservations: [
-                "POST /api/reservations (Protect)", 
-                "GET /api/reservations/my (Protect)",
-                "DELETE /api/reservations/:id (Protect)"
+                "POST /api/reservation (Protect)",
+                "GET /api/reservation/user (Protect)",
+                "GET /api/reservation/all (Admin)",
+                "PUT /api/reservation/status (Admin)",
+                "DELETE /api/reservation/:id (Protect)"
             ],
             reviews: [
-                "POST /api/reviews (Protect)", 
-                "GET /api/reviews/:hotelId",
-                "DELETE /api/reviews/:id (Protect)"
+                "POST /api/review (Protect)", 
+                "GET /api/review/:hotelId",
+                "DELETE /api/review/:id (Protect)"
+            ],
+            wishlist: [
+                "GET /api/wishlist (Protect)",
+                "POST /api/wishlist/:hotelId (Protect)",
+                "DELETE /api/wishlist/:hotelId (Protect)"
             ]
         }
     });
@@ -66,10 +82,19 @@ app.get('/api', (req, res) => {
 
 // --- 3. MARŞRUTLARIN QOŞULMASI ---
 app.use('/api/auth', authRoutes);
+app.use('/', authRoutes); // /register və /login üçün alias
 app.use('/api/hotels', hotelRoutes);
+app.use('/hotels', hotelRoutes);
 app.use('/api/reservation', reservationRoutes);
+app.use('/reservation', reservationRoutes);
+app.use('/api/reservations', reservationRoutes);
 app.use('/api/review', reviewRoutes);
+app.use('/review', reviewRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/wishlist', wishlistRoutes);
+app.use('/wishlist', wishlistRoutes);
+app.use('/api/rooms', roomRoutes);
+app.use('/rooms', roomRoutes);
 
 // --- 4. XƏTA İDARƏETMƏSİ ---
 app.use((req, res, next) => {

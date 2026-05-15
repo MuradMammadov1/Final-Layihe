@@ -1,13 +1,43 @@
 const Hotel = require('../models/Hotel');
 const Reservation = require('../models/Reservation');
+const Room = require('../models/Room');
+const Review = require('../models/Review');
 const cloudinary = require('../config/cloudinary');
+
+const buildDateOverlap = (startDate, endDate) => ({
+    $or: [
+        { startDate: { $lte: endDate }, endDate: { $gte: startDate } }
+    ]
+});
+
+const getAvailability = async (hotel, startDate, endDate) => {
+    if (!startDate || !endDate) {
+        return { available: true, availableRooms: hotel.rooms?.length ?? 0 };
+    }
+
+    const hotelRooms = await Room.find({ hotel: hotel._id });
+    if (!hotelRooms.length) {
+        return { available: true, availableRooms: 0 };
+    }
+
+    const totalRoomCount = hotelRooms.reduce((sum, room) => sum + (room.count || 1), 0);
+    const reserved = await Reservation.countDocuments({
+        hotel: hotel._id,
+        status: { $ne: 'cancelled' },
+        ...buildDateOverlap(startDate, endDate)
+    });
+
+    return {
+        available: reserved < totalRoomCount,
+        availableRooms: Math.max(0, totalRoomCount - reserved)
+    };
+};
 
 exports.getHotels = async (req, res, next) => {
     try {
         let query = {};
+        const { city, minPrice, maxPrice, rating, startDate, endDate } = req.query;
 
-        // Filtrlər
-        const { city, minPrice, maxPrice, rating } = req.query;
         if (city) query.city = { $regex: city, $options: 'i' };
         if (minPrice || maxPrice) {
             query.price = {};
@@ -16,33 +46,63 @@ exports.getHotels = async (req, res, next) => {
         }
         if (rating) query.rating = { $gte: Number(rating) };
 
-        // Pagination
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 10;
         const startIndex = (page - 1) * limit;
 
-        const hotels = await Hotel.find(query).skip(startIndex).limit(limit).populate('reviews');
-        const total = await Hotel.countDocuments(query);
+        const hotels = await Hotel.find(query)
+            .skip(startIndex)
+            .limit(limit)
+            .populate('reviews')
+            .populate('rooms');
 
-        res.status(200).json({ 
-            success: true, 
-            count: hotels.length, 
+        const total = await Hotel.countDocuments(query);
+        let hotelsWithAvailability = await Promise.all(hotels.map(async hotel => {
+            const availability = await getAvailability(
+                hotel,
+                startDate ? new Date(startDate) : null,
+                endDate ? new Date(endDate) : null
+            );
+            return { ...hotel.toObject(), availability };
+        }));
+
+        if (startDate && endDate) {
+            hotelsWithAvailability = hotelsWithAvailability.filter(hotel => hotel.availability.available);
+        }
+
+        res.status(200).json({
+            success: true,
+            count: hotelsWithAvailability.length,
             pagination: {
                 page,
                 limit,
                 total,
-                pages: Math.ceil(total / limit)
+                pages: Math.ceil(hotelsWithAvailability.length / limit)
             },
-            data: hotels 
+            data: hotelsWithAvailability
         });
     } catch (error) { next(error); }
 };
 
 exports.getHotel = async (req, res, next) => {
     try {
-        const hotel = await Hotel.findById(req.params.id).populate('reviews');
-        if (!hotel) return res.status(404).json({ success: false, message: "Otel tapılmadı" });
-        res.status(200).json({ success: true, data: hotel });
+        const hotel = await Hotel.findById(req.params.id)
+            .populate('reviews')
+            .populate('rooms');
+
+        if (!hotel) {
+            res.status(404);
+            return next(new Error('Otel tapılmadı'));
+        }
+
+        const { startDate, endDate } = req.query;
+        const availability = await getAvailability(
+            hotel,
+            startDate ? new Date(startDate) : null,
+            endDate ? new Date(endDate) : null
+        );
+
+        res.status(200).json({ success: true, data: { ...hotel.toObject(), availability } });
     } catch (error) { next(error); }
 };
 

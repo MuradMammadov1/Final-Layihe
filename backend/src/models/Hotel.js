@@ -7,7 +7,8 @@ const hotelSchema = new mongoose.Schema({
     description: { type: String },
     images: [String], 
     rating: { type: Number, default: 0 },
-    amenities: [String]
+    amenities: [String],
+    rooms: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Room' }]
 }, { 
     timestamps: true,
     toJSON: { virtuals: true }, // Rəyləri JSON-da göstərmək üçün
