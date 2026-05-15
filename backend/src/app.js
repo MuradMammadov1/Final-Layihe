@@ -11,6 +11,8 @@ const reservationRoutes = require('./routes/reservationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const roomRoutes = require('./routes/roomRoutes');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
 
 const app = express();
 
@@ -95,6 +97,9 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/wishlist', wishlistRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/rooms', roomRoutes);
+
+// API docs (Swagger)
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // --- 4. XƏTA İDARƏETMƏSİ ---
 app.use((req, res, next) => {

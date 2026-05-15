@@ -60,10 +60,17 @@ exports.deleteRoom = async (req, res, next) => {
             return next(new Error('Otaq tapılmadı'));
         }
 
-        await room.deleteOne();
+        // delete reservations associated with this room
+        const Reservation = require('../models/Reservation');
+        await Reservation.deleteMany({ room: room._id });
+
+        // remove room reference from hotel
         await Hotel.findByIdAndUpdate(room.hotel, { $pull: { rooms: room._id } });
 
-        res.status(200).json({ success: true, message: 'Otaq silindi' });
+        // delete the room
+        await room.deleteOne();
+
+        res.status(200).json({ success: true, message: 'Otaq silindi və bağlı rezervasiyalar silindi' });
     } catch (error) {
         next(error);
     }

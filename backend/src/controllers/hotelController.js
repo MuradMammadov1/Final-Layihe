@@ -138,7 +138,7 @@ exports.updateHotel = async (req, res, next) => {
             }
             // Mövcud şəkillərə əlavə et və ya əvəz et
             const existingHotel = await Hotel.findById(req.params.id);
-            hotelData.images = existingHotel.images.concat(imageUrls);
+            hotelData.images = (existingHotel.images || []).concat(imageUrls);
         }
 
         const hotel = await Hotel.findByIdAndUpdate(req.params.id, hotelData, {
@@ -152,9 +152,20 @@ exports.updateHotel = async (req, res, next) => {
 
 exports.deleteHotel = async (req, res, next) => {
     try {
-        const hotel = await Hotel.findByIdAndDelete(req.params.id);
-        if (!hotel) return res.status(404).json({ success: false, message: "Otel tapılmadı" });
-        res.status(200).json({ success: true, message: "Otel silindi" });
+        const hotel = await Hotel.findById(req.params.id);
+        if (!hotel) {
+            res.status(404);
+            return next(new Error('Otel tapılmadı'));
+        }
+
+        // Cascade delete related data
+        await Room.deleteMany({ hotel: hotel._id });
+        await Reservation.deleteMany({ hotel: hotel._id });
+        await Review.deleteMany({ hotel: hotel._id });
+
+        await hotel.deleteOne();
+
+        res.status(200).json({ success: true, message: 'Otel və bağlı məlumatlar silindi' });
     } catch (error) { next(error); }
 };
 

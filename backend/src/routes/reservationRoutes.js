@@ -7,10 +7,11 @@ const {
     updateReservationStatus
 } = require('../controllers/reservationController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const { validateReservation } = require('../middleware/validateMiddleware');
 
 // /api/reservation
 router.route('/')
-    .post(protect, makeReservation) // Rezervasiya et
+    .post(protect, validateReservation, makeReservation) // Rezervasiya et
 
 // /api/reservation/user
 router.route('/user')
