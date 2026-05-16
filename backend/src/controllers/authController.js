@@ -66,3 +66,41 @@ exports.login = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Cari istifadəçinin profilini al
+// @route   GET /api/auth/me
+exports.getMe = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id || req.user.id).select('-password');
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Cari istifadəçinin profilini yenilə
+// @route   PUT /api/auth/me
+exports.updateMe = async (req, res, next) => {
+    try {
+        const { name, email } = req.body;
+        const updates = {};
+        if (name) updates.name = name;
+        if (email) {
+            const exists = await User.findOne({ email, _id: { $ne: req.user._id || req.user.id } });
+            if (exists) {
+                res.status(400);
+                return next(new Error('Bu email artıq istifadə olunur'));
+            }
+            updates.email = email;
+        }
+
+        const user = await User.findByIdAndUpdate(req.user._id || req.user.id, updates, {
+            new: true,
+            runValidators: true
+        }).select('-password');
+
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        next(error);
+    }
+};

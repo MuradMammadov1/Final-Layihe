@@ -107,6 +107,27 @@ exports.getMyReservations = async (req, res, next) => {
     } catch (error) { next(error); }
 };
 
+exports.getReservation = async (req, res, next) => {
+    try {
+        const reservation = await Reservation.findById(req.params.id)
+            .populate({ path: 'hotel', select: 'name city price images' })
+            .populate({ path: 'room', select: 'title price type capacity' })
+            .populate({ path: 'user', select: 'name email' });
+
+        if (!reservation) {
+            res.status(404);
+            return next(new Error('Rezervasiya tapılmadı'));
+        }
+
+        const userId = req.user._id || req.user.id;
+        if (req.user.role !== 'admin' && reservation.user._id.toString() !== userId.toString()) {
+            return res.status(401).json({ success: false, message: 'Bu rezervasiyaya baxmağa icazəniz yoxdur' });
+        }
+
+        res.status(200).json({ success: true, data: reservation });
+    } catch (error) { next(error); }
+};
+
 exports.cancelReservation = async (req, res, next) => {
     try {
         const reservation = await Reservation.findById(req.params.id);

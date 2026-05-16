@@ -3,7 +3,8 @@ const router = express.Router();
 const { 
     addReview, 
     getHotelReviews, 
-    deleteReview 
+    deleteReview,
+    updateReview 
 } = require('../controllers/reviewController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -14,7 +15,8 @@ router.route('/')
 // /api/review/:hotelId (Otelin rəylərini görmək üçün)
 router.get('/:hotelId', getHotelReviews);
 
-// /api/review/:id (Konkret bir rəyi silmək üçün)
+// /api/review/:id (Konkret bir rəyi redaktə və silmək üçün)
+router.put('/:id', protect, updateReview);
 router.delete('/:id', protect, deleteReview);
 
 module.exports = router;

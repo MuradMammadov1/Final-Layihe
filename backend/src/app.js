@@ -45,7 +45,7 @@ app.get('/api', (req, res) => {
         status: "Active",
         author: "Murad Məmmədov",
         endpoints: {
-            auth: ["POST /api/auth/register", "POST /api/auth/login", "POST /register", "POST /login"],
+            auth: ["POST /api/auth/register", "POST /api/auth/login", "GET /api/auth/me (Protect)", "PUT /api/auth/me (Protect)", "POST /register", "POST /login"],
             hotels: [
                 "GET /api/hotels", 
                 "GET /api/hotels/:id", 
@@ -64,6 +64,7 @@ app.get('/api', (req, res) => {
             reservations: [
                 "POST /api/reservation (Protect)",
                 "GET /api/reservation/user (Protect)",
+                "GET /api/reservation/:id (Protect)",
                 "GET /api/reservation/all (Admin)",
                 "PUT /api/reservation/status (Admin)",
                 "DELETE /api/reservation/:id (Protect)"
@@ -71,6 +72,7 @@ app.get('/api', (req, res) => {
             reviews: [
                 "POST /api/review (Protect)", 
                 "GET /api/review/:hotelId",
+                "PUT /api/review/:id (Protect)",
                 "DELETE /api/review/:id (Protect)"
             ],
             wishlist: [

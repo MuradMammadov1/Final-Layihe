@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { 
     makeReservation, 
-    getMyReservations, 
+    getMyReservations,
+    getReservation,
     cancelReservation,
     updateReservationStatus
 } = require('../controllers/reservationController');
@@ -26,6 +27,7 @@ router.route('/status')
     .put(protect, authorize('admin'), updateReservationStatus); // Admin status dəyiş
 
 // /api/reservation/:id
+router.get('/:id', protect, getReservation); // Bir rezervasiyaya bax
 router.delete('/:id', protect, cancelReservation); // Rezervasiyanı ləğv et
 router.put('/:id/status', protect, authorize('admin'), updateReservationStatus); // Admin status dəyiş
 

@@ -40,3 +40,31 @@ exports.deleteReview = async (req, res, next) => {
         res.status(200).json({ success: true, message: "Rəy silindi" });
     } catch (error) { next(error); }
 };
+
+// PUT - Rəyi redaktə et
+exports.updateReview = async (req, res, next) => {
+    try {
+        const { rating, comment } = req.body;
+        
+        const review = await Review.findById(req.params.id);
+        if (!review) {
+            res.status(404);
+            return next(new Error("Rəy tapılmadı"));
+        }
+
+        if (review.user.toString() !== (req.user._id || req.user.id).toString()) {
+            return res.status(401).json({ success: false, message: "İcazəniz yoxdur" });
+        }
+
+        if (rating) review.rating = rating;
+        if (comment) review.comment = comment;
+        await review.save();
+
+        // Otelin rating-ini yenilə
+        const reviews = await Review.find({ hotel: review.hotel });
+        const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+        await Hotel.findByIdAndUpdate(review.hotel, { rating: avgRating.toFixed(1) });
+
+        res.status(200).json({ success: true, data: review });
+    } catch (error) { next(error); }
+};
