@@ -11,6 +11,9 @@ export default function AdminLayout(){
         <NavLink to="/admin/hotels" className={({ isActive }) => `nav-link-pill ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-gray-700'}`}>
           Hotels
         </NavLink>
+        <NavLink to="/admin/rooms" className={({ isActive }) => `nav-link-pill ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-gray-700'}`}>
+          Rooms
+        </NavLink>
         <NavLink to="/admin/reservations" className={({ isActive }) => `nav-link-pill ${isActive ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-gray-700'}`}>
           Reservations
         </NavLink>

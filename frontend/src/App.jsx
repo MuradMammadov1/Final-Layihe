@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 import AdminLayout from './pages/Admin/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard'
 import HotelManager from './pages/Admin/HotelManager'
+import RoomManager from './pages/Admin/RoomManager'
 import ReservationManager from './pages/Admin/ReservationManager'
 import AdminGuard from './components/AdminGuard'
 
@@ -28,6 +29,7 @@ export default function App(){
           <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
             <Route index element={<Dashboard />} />
             <Route path="hotels" element={<HotelManager />} />
+            <Route path="rooms" element={<RoomManager />} />
             <Route path="reservations" element={<ReservationManager />} />
           </Route>
         </Routes>
