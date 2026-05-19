@@ -13,9 +13,10 @@ const generateToken = (id) => {
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
+        const normalizedEmail = email.toLowerCase().trim();
 
         // 1. Email-in olub-olmadığını yoxla
-        const userExists = await User.findOne({ email });
+        const userExists = await User.findOne({ email: normalizedEmail });
         if (userExists) {
             res.status(400);
             throw new Error('Bu email ilə artıq qeydiyyatdan keçilib');
@@ -24,7 +25,7 @@ exports.register = async (req, res, next) => {
         // 2. Yeni istifadəçi yarat
         const user = await User.create({
             name,
-            email,
+            email: normalizedEmail,
             password, // Qeyd: User modelində şifrəni hash-ləyən middleware olmalıdır
         });
 
@@ -47,9 +48,10 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        const normalizedEmail = email.toLowerCase().trim();
 
         // İstifadəçini tap
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: normalizedEmail });
 
         // Şifrəni yoxla (User modelində matchPassword funksiyası olmalıdır)
         if (user && (await user.matchPassword(password))) {

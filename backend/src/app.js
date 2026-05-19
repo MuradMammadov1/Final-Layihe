@@ -86,19 +86,11 @@ app.get('/api', (req, res) => {
 
 // --- 3. MARŞRUTLARIN QOŞULMASI ---
 app.use('/api/auth', authRoutes);
-app.use('/', authRoutes); // /register və /login üçün alias
 app.use('/api/hotels', hotelRoutes);
-app.use('/hotels', hotelRoutes);
 app.use('/api/reservation', reservationRoutes);
-app.use('/reservation', reservationRoutes);
-app.use('/api/reservations', reservationRoutes);
 app.use('/api/review', reviewRoutes);
-app.use('/review', reviewRoutes);
-app.use('/api/reviews', reviewRoutes);
 app.use('/api/wishlist', wishlistRoutes);
-app.use('/wishlist', wishlistRoutes);
 app.use('/api/rooms', roomRoutes);
-app.use('/rooms', roomRoutes);
 
 // API docs (Swagger)
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

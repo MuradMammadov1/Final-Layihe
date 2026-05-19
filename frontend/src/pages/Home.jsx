@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Home(){
   return (
@@ -9,8 +10,8 @@ export default function Home(){
           <h1 className="hero-title mt-6">Stay in comfort, book with confidence.</h1>
           <p className="hero-copy mt-5">Aura Grand delivers a professional hotel booking experience with curated stays, clear pricing, and an easy reservation workflow for travelers and managers alike.</p>
           <div className="hero-actions">
-            <a href="/hotels" className="btn">Browse hotels</a>
-            <a href="/register" className="btn secondary">Get started</a>
+            <Link to="/hotels" className="btn">Browse hotels</Link>
+            <Link to="/register" className="btn secondary">Get started</Link>
           </div>
         </div>
 
