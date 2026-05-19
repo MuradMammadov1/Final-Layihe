@@ -52,57 +52,60 @@ export default function Profile(){
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded shadow max-w-xl mx-auto">
-        <div className="flex items-center justify-between">
+      <div className="panel max-w-xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold">{user.name}</h2>
             <p className="text-sm text-gray-600">{user.email}</p>
+            <p className="mt-1 text-sm text-indigo-600">Member dashboard</p>
           </div>
-          <button className="btn" onClick={logout}>Logout</button>
+          <button className="btn secondary" onClick={logout}>Logout</button>
         </div>
       </div>
 
-      {message && <div className="max-w-xl mx-auto p-4 rounded bg-slate-100">{message}</div>}
+      {message && <div className="alert max-w-xl mx-auto">{message}</div>}
 
-      <section className="bg-white p-6 rounded shadow max-w-xl mx-auto">
+      <section className="panel max-w-xl mx-auto">
         <h3 className="text-xl font-semibold mb-4">My Reservations</h3>
         {reservations.length === 0 ? (
           <p className="text-gray-600">No reservations yet.</p>
         ) : (
           <div className="space-y-4">
             {reservations.map(res => (
-              <div key={res._id} className="border rounded p-4">
-                <div className="flex items-center justify-between">
+              <div key={res._id} className="border rounded p-4 bg-slate-50">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                   <div>
                     <h4 className="font-semibold">{res.hotel?.name || 'Hotel'}</h4>
                     <p className="text-sm text-gray-600">{res.hotel?.city}</p>
+                    <p className="mt-1 text-gray-700">Room: {res.room?.title || 'Any'}</p>
+                    <p className="text-sm text-gray-600">{new Date(res.startDate).toLocaleDateString()} - {new Date(res.endDate).toLocaleDateString()}</p>
                   </div>
-                  <span className="text-indigo-600 font-semibold">{res.status}</span>
+                  <div className="flex flex-col gap-2 items-start md:items-end">
+                    <span className="badge">{res.status}</span>
+                    <p className="text-indigo-600 font-semibold">Total: ${res.totalPrice}</p>
+                    <button className="btn secondary" onClick={() => cancelReservation(res._id)}>Cancel</button>
+                  </div>
                 </div>
-                <p className="mt-2 text-gray-700">Room: {res.room?.title || 'Any'}</p>
-                <p className="text-sm text-gray-600">{new Date(res.startDate).toLocaleDateString()} - {new Date(res.endDate).toLocaleDateString()}</p>
-                <p className="mt-2">Total: ${res.totalPrice}</p>
-                <button className="btn mt-3" onClick={() => cancelReservation(res._id)}>Cancel</button>
               </div>
             ))}
           </div>
         )}
       </section>
 
-      <section className="bg-white p-6 rounded shadow max-w-xl mx-auto">
+      <section className="panel max-w-xl mx-auto">
         <h3 className="text-xl font-semibold mb-4">My Wishlist</h3>
         {wishlist.length === 0 ? (
           <p className="text-gray-600">Your wishlist is empty.</p>
         ) : (
           <div className="space-y-4">
             {wishlist.map(hotel => (
-              <div key={hotel._id} className="border rounded p-4">
-                <div className="flex items-center justify-between">
+              <div key={hotel._id} className="border rounded p-4 bg-slate-50">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                   <div>
                     <h4 className="font-semibold">{hotel.name}</h4>
                     <p className="text-sm text-gray-600">{hotel.city}</p>
                   </div>
-                  <button className="btn" onClick={() => removeWishlist(hotel._id)}>Remove</button>
+                  <button className="btn secondary" onClick={() => removeWishlist(hotel._id)}>Remove</button>
                 </div>
               </div>
             ))}

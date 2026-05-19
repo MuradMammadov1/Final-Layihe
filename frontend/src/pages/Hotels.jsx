@@ -8,6 +8,7 @@ export default function Hotels(){
   const [city, setCity] = useState('')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
+  const [rating, setRating] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [wishlistIds, setWishlistIds] = useState([])
@@ -49,29 +50,43 @@ export default function Hotels(){
 
   const handleSearch = e => {
     e.preventDefault()
-    loadHotels({ city, minPrice, maxPrice, startDate, endDate })
+    loadHotels({ city, minPrice, maxPrice, rating, startDate, endDate })
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded shadow max-w-full">
-        <h2 className="text-2xl font-semibold mb-4">Search Hotels</h2>
-        <form onSubmit={handleSearch} className="grid gap-4 md:grid-cols-5">
+    <div className="space-y-8">
+      <div className="panel max-w-full">
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Search Hotels</h2>
+            <p className="text-gray-600 mt-2">Find the best hotel for your next trip with flexible filters and real-time search.</p>
+          </div>
+          <div className="text-right text-sm text-gray-500">{hotels.length} hotels available</div>
+        </div>
+
+        <form onSubmit={handleSearch} className="grid gap-4 md:grid-cols-5 mt-6">
           <div>
             <label className="block text-sm font-medium">City</label>
-            <input value={city} onChange={e => setCity(e.target.value)} className="w-full border px-3 py-2 rounded" placeholder="Baku" />
+            <input value={city} onChange={e => setCity(e.target.value)} className="input" placeholder="Baku" />
           </div>
           <div>
             <label className="block text-sm font-medium">Min Price</label>
-            <input value={minPrice} onChange={e => setMinPrice(e.target.value)} className="w-full border px-3 py-2 rounded" type="number" placeholder="0" />
+            <input value={minPrice} onChange={e => setMinPrice(e.target.value)} className="input" type="number" placeholder="0" />
           </div>
           <div>
             <label className="block text-sm font-medium">Max Price</label>
-            <input value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="w-full border px-3 py-2 rounded" type="number" placeholder="500" />
+            <input value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="input" type="number" placeholder="500" />
           </div>
           <div>
-            <label className="block text-sm font-medium">Start Date</label>
-            <input value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full border px-3 py-2 rounded" type="date" />
+            <label className="block text-sm font-medium">Min Rating</label>
+            <select value={rating} onChange={e => setRating(e.target.value)} className="input">
+              <option value="">Any</option>
+              <option value="1">1+</option>
+              <option value="2">2+</option>
+              <option value="3">3+</option>
+              <option value="4">4+</option>
+              <option value="5">5</option>
+            </select>
           </div>
           <div className="flex items-end">
             <button className="btn w-full" type="submit">Search</button>
@@ -80,13 +95,17 @@ export default function Hotels(){
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Hotels</h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-2xl font-semibold">Available hotels</h2>
+          <span className="badge">{hotels.length} results</span>
+        </div>
+
         {loading ? (
-          <div className="bg-white p-6 rounded shadow text-center">Loading hotels...</div>
+          <div className="panel text-center">Loading hotels...</div>
         ) : hotels.length === 0 ? (
-          <div className="bg-white p-6 rounded shadow">No hotels found.</div>
+          <div className="panel">No hotels found.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid gap-4 hotel-grid mt-4">
             {hotels.map(h => (
               <HotelCard
                 key={h._id}

@@ -27,18 +27,18 @@ export default function Login(){
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
+    <div className="max-w-md mx-auto card p-6">
       <h2 className="text-xl font-semibold mb-4">Login</h2>
-      <form onSubmit={submit}>
-        <div className="mb-3">
+      <form onSubmit={submit} className="space-y-4">
+        <div>
           <label className="block text-sm">Email</label>
-          <input className="w-full border px-2 py-1" value={email} onChange={e=>setEmail(e.target.value)} />
+          <input className="input" value={email} onChange={e=>setEmail(e.target.value)} />
         </div>
-        <div className="mb-3">
+        <div>
           <label className="block text-sm">Password</label>
-          <input type="password" className="w-full border px-2 py-1" value={password} onChange={e=>setPassword(e.target.value)} />
+          <input type="password" className="input" value={password} onChange={e=>setPassword(e.target.value)} />
         </div>
-        <button className="btn" type="submit">Sign In</button>
+        <button className="btn w-full" type="submit">Sign In</button>
       </form>
     </div>
   )

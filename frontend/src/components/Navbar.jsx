@@ -18,24 +18,24 @@ export default function Navbar(){
   }
 
   return (
-    <nav className="bg-white shadow">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+    <nav className="navbar">
+      <div className="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <Link to="/" className="text-xl font-bold text-indigo-600">Aura Grand</Link>
-        <div className="space-x-4 flex items-center">
-          <Link to="/hotels" className="text-gray-700">Hotels</Link>
+        <div className="flex flex-wrap items-center gap-3 nav-links">
+          <Link to="/hotels" className="nav-link-pill">Hotels</Link>
           {!loading && user ? (
             <>
-              <Link to="/profile" className="text-gray-700">{user.name}</Link>
-              {user.role === 'admin' && <Link to="/admin" className="text-gray-700">Admin</Link>}
-              <button onClick={doLogout} className="ml-2 px-3 py-1 border rounded">Logout</button>
+              <Link to="/profile" className="nav-link-pill">{user.name}</Link>
+              {user.role === 'admin' && <Link to="/admin" className="nav-link-pill">Admin</Link>}
+              <button onClick={doLogout} className="btn secondary">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-gray-700">Login</Link>
-              <Link to="/register" className="text-gray-700">Register</Link>
+              <Link to="/login" className="nav-link-pill">Login</Link>
+              <Link to="/register" className="nav-link-pill">Register</Link>
             </>
           )}
-          <button onClick={() => setDark(d => !d)} className="ml-3 px-3 py-1 border rounded">{dark ? 'Light' : 'Dark'}</button>
+          <button onClick={() => setDark(d => !d)} className="btn secondary">{dark ? 'Light' : 'Dark'}</button>
         </div>
       </div>
     </nav>

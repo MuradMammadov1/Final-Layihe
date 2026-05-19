@@ -49,29 +49,32 @@ export default function HotelManager(){
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-2xl font-semibold mb-4">Hotel Management</h2>
-        {message && <div className="mb-4 p-3 rounded bg-slate-100 text-gray-700">{message}</div>}
-        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+      <div className="panel">
+        <div className="flex flex-col gap-3">
+          <h2 className="text-2xl font-semibold">Hotel Management</h2>
+          <p className="text-gray-600">Create and manage hotel listings from a central admin interface.</p>
+        </div>
+        {message && <div className="alert mt-4">{message}</div>}
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 mt-6">
           <div>
             <label className="block text-sm font-medium">Name</label>
-            <input name="name" value={form.name} onChange={handleChange} className="w-full border px-3 py-2 rounded" required />
+            <input name="name" value={form.name} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block text-sm font-medium">City</label>
-            <input name="city" value={form.city} onChange={handleChange} className="w-full border px-3 py-2 rounded" required />
+            <input name="city" value={form.city} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block text-sm font-medium">Price</label>
-            <input name="price" type="number" value={form.price} onChange={handleChange} className="w-full border px-3 py-2 rounded" required />
+            <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block text-sm font-medium">Image URLs</label>
-            <input name="images" value={form.images} onChange={handleChange} className="w-full border px-3 py-2 rounded" placeholder="comma separated URLs" />
+            <input name="images" value={form.images} onChange={handleChange} className="input" placeholder="comma separated URLs" />
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium">Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="w-full border px-3 py-2 rounded" />
+            <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="input" />
           </div>
           <div className="md:col-span-2">
             <button className="btn">Create Hotel</button>
@@ -79,19 +82,19 @@ export default function HotelManager(){
         </form>
       </div>
 
-      <div className="bg-white p-6 rounded shadow">
+      <div className="panel">
         <h3 className="text-xl font-semibold mb-4">Existing Hotels</h3>
         <div className="space-y-3">
           {hotels.length === 0 ? (
-            <p>No hotels loaded.</p>
+            <p className="text-gray-600">No hotels loaded yet.</p>
           ) : hotels.map(hotel => (
-            <div key={hotel._id} className="border rounded p-4 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <div key={hotel._id} className="p-4 rounded border flex flex-col md:flex-row md:justify-between md:items-center gap-3">
               <div>
                 <h4 className="font-semibold">{hotel.name}</h4>
                 <p className="text-sm text-gray-600">{hotel.city}</p>
-                <p className="mt-1">${hotel.price}</p>
+                <p className="mt-1 text-indigo-600 font-semibold">${hotel.price}</p>
               </div>
-              <button className="btn" onClick={() => handleDelete(hotel._id)}>Delete</button>
+              <button className="btn secondary" onClick={() => handleDelete(hotel._id)}>Delete</button>
             </div>
           ))}
         </div>

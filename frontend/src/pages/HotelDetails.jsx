@@ -12,6 +12,10 @@ export default function HotelDetails(){
   const [endDate, setEndDate] = useState('')
   const [message, setMessage] = useState('')
   const [saved, setSaved] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewError, setReviewError] = useState('')
 
   useEffect(()=>{
     const loadHotel = async () => {
@@ -24,6 +28,18 @@ export default function HotelDetails(){
     }
     loadHotel()
   },[id])
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const res = await api.get(`/review/${id}`)
+        setReviews(res.data.data)
+      } catch {
+        setReviews([])
+      }
+    }
+    loadReviews()
+  }, [id])
 
   useEffect(() => {
     if (!user || !hotel) return
@@ -55,71 +71,146 @@ export default function HotelDetails(){
     }
   }
 
+  const handleSubmitReview = async e => {
+    e.preventDefault()
+    if (!user) {
+      setReviewError('Təkrar daxil olun və rəy yazın.')
+      return
+    }
+
+    if (!reviewComment.trim()) {
+      setReviewError('Zəhmət olmasa, rəy yazın.')
+      return
+    }
+
+    try {
+      await api.post('/review', {
+        hotel: id,
+        rating: reviewRating,
+        comment: reviewComment.trim()
+      })
+      setReviewComment('')
+      setReviewError('')
+      const res = await api.get(`/review/${id}`)
+      setReviews(res.data.data)
+    } catch (err) {
+      setReviewError(err.response?.data?.message || 'Rəy göndərərkən xəta baş verdi.')
+    }
+  }
+
   if (!hotel) return <div>Loading...</div>
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded shadow">
-        <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
-          <div>
-            <h2 className="text-2xl font-semibold">{hotel.name}</h2>
-            <p className="text-sm text-gray-600 mt-1">{hotel.city}</p>
-          </div>
-          <div className="text-right">
-            <div className="text-lg font-semibold text-indigo-600">${hotel.price} / night</div>
-            {hotel.rating && <div className="text-sm text-gray-500">Rating: {hotel.rating.toFixed(1)}</div>}
+    <div className="space-y-8">
+      <div className="detail-grid">
+        <div className="detail-card">
+          <div className="flex flex-col gap-4">
+            <div>
+              <span className="badge">{hotel.city}</span>
+              <h2 className="text-3xl font-semibold mt-4">{hotel.name}</h2>
+              <p className="text-gray-600 mt-3">{hotel.description || 'Explore premium hotel rooms, modern amenities, and convenient booking options for your next stay.'}</p>
+            </div>
+
+            <div className="hotel-details-meta">
+              <span className="stat-pill">${hotel.price} / night</span>
+              {hotel.rating && <span className="stat-pill">Rating {hotel.rating.toFixed(1)}</span>}
+              {hotel.availability && <span className="stat-pill">{hotel.availability.available ? `${hotel.availability.availableRooms || 'Available'} rooms` : 'Sold out'}</span>}
+            </div>
+
+            <div className="image-grid mt-4">
+              {hotel.images?.slice(0, 3).map((src, i) => (
+                <img key={i} src={src} alt={`Hotel image ${i + 1}`} className="w-full h-44 object-cover rounded" />
+              ))}
+            </div>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {hotel.availability && (
-            <span className={`px-3 py-1 rounded text-sm ${hotel.availability.available ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-              {hotel.availability.available ? `${hotel.availability.availableRooms || 'Some'} rooms available` : 'No rooms available'}
-            </span>
+
+        <div className="detail-card">
+          <h3 className="text-xl font-semibold mb-4">Guest Reviews</h3>
+          {reviews.length === 0 ? (
+            <p className="text-gray-600">Hələ bir rəy yazılmayıb.</p>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map(review => (
+                <div key={review._id} className="border rounded p-4 bg-slate-50">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{review.user?.name || 'Qonaq'}</p>
+                      <p className="text-sm text-gray-600">{new Date(review.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <span className="badge">{review.rating}⭐</span>
+                  </div>
+                  <p className="mt-3 text-gray-700">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {user ? (
+            <form onSubmit={handleSubmitReview} className="space-y-4 mt-6">
+              <div>
+                <label className="block text-sm font-medium">Your rating</label>
+                <select value={reviewRating} onChange={e => setReviewRating(Number(e.target.value))} className="input">
+                  <option value={5}>5 - Excellent</option>
+                  <option value={4}>4 - Very good</option>
+                  <option value={3}>3 - Good</option>
+                  <option value={2}>2 - Fair</option>
+                  <option value={1}>1 - Poor</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Comment</label>
+                <textarea value={reviewComment} onChange={e => setReviewComment(e.target.value)} className="input" rows="4" placeholder="Write your experience..."></textarea>
+              </div>
+              {reviewError && <div className="alert">{reviewError}</div>}
+              <button className="btn w-full" type="submit">Submit Review</button>
+            </form>
+          ) : (
+            <p className="mt-6 text-gray-600">Rəy yazmaq üçün daxil olun.</p>
           )}
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          {hotel.images?.map((src,i)=> (
-            <img key={i} src={src} alt="img" className="w-full h-48 object-cover rounded" />
-          ))}
-        </div>
-        <p className="mt-4 text-gray-700">{hotel.description}</p>
-        {user && (
-          <button
-            type="button"
-            className="mt-5 btn"
-            onClick={async () => {
-              try {
-                if (saved) {
-                  await api.delete(`/wishlist/${hotel._id}`)
-                  setSaved(false)
-                } else {
-                  await api.post(`/wishlist/${hotel._id}`)
-                  setSaved(true)
-                }
-              } catch {
-                setMessage('Wishlist update failed.')
-              }
-            }}
-          >
-            {saved ? 'Remove from Wishlist' : 'Save to Wishlist'}
-          </button>
-        )}
-      </div>
 
-      <div className="bg-white p-6 rounded shadow max-w-md">
-        <h3 className="text-xl font-semibold mb-4">Book this hotel</h3>
-        {message && <div className="mb-4 p-3 rounded bg-slate-100">{message}</div>}
-        <form onSubmit={handleReserve} className="space-y-4">
+        <div className="detail-card detail-summary">
           <div>
-            <label className="block text-sm font-medium">Check-in</label>
-            <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} className="w-full border px-3 py-2 rounded" required />
+            <h3 className="text-xl font-semibold">Reservation details</h3>
+            <p className="mt-2 text-gray-600">Choose your dates and confirm instantly. Logged-in users can save hotels to wishlist and manage bookings.</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium">Check-out</label>
-            <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} className="w-full border px-3 py-2 rounded" required />
-          </div>
-          <button className="btn w-full" type="submit">Reserve now</button>
-        </form>
+
+          {message && <div className="alert">{message}</div>}
+
+          <form onSubmit={handleReserve} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium">Check-in</label>
+              <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} className="input" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium">Check-out</label>
+              <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} className="input" required />
+            </div>
+            <button className="btn w-full" type="submit">Reserve now</button>
+            {user && (
+              <button
+                type="button"
+                className="btn secondary w-full"
+                onClick={async () => {
+                  try {
+                    if (saved) {
+                      await api.delete(`/wishlist/${hotel._id}`)
+                      setSaved(false)
+                    } else {
+                      await api.post(`/wishlist/${hotel._id}`)
+                      setSaved(true)
+                    }
+                  } catch {
+                    setMessage('Wishlist update failed.')
+                  }
+                }}
+              >
+                {saved ? 'Remove from Wishlist' : 'Save to Wishlist'}
+              </button>
+            )}
+          </form>
+        </div>
       </div>
     </div>
   )
