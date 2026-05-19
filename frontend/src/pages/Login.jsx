@@ -1,20 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import api from '../api'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext'
 
 export default function Login(){
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const { setUser } = useContext(AuthContext)
 
   const submit = async e => {
     e.preventDefault()
     try {
       const res = await api.post('/auth/login', { email, password })
       localStorage.setItem('token', res.data.token)
-      navigate('/profile')
+      setUser({
+        _id: res.data._id,
+        name: res.data.name,
+        email: res.data.email,
+        role: res.data.role
+      })
+      navigate(res.data.role === 'admin' ? '/admin' : '/profile')
     } catch (err) {
-      alert('Login failed')
+      alert(err.response?.data?.message || 'Login failed')
     }
   }
 

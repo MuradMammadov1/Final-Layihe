@@ -26,6 +26,7 @@ export default function Navbar(){
           {!loading && user ? (
             <>
               <Link to="/profile" className="text-gray-700">{user.name}</Link>
+              {user.role === 'admin' && <Link to="/admin" className="text-gray-700">Admin</Link>}
               <button onClick={doLogout} className="ml-2 px-3 py-1 border rounded">Logout</button>
             </>
           ) : (
@@ -34,7 +35,6 @@ export default function Navbar(){
               <Link to="/register" className="text-gray-700">Register</Link>
             </>
           )}
-          <Link to="/admin" className="text-gray-700">Admin</Link>
           <button onClick={() => setDark(d => !d)} className="ml-3 px-3 py-1 border rounded">{dark ? 'Light' : 'Dark'}</button>
         </div>
       </div>
