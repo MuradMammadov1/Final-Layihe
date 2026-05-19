@@ -8,6 +8,8 @@ export default function HotelDetails(){
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
   const [hotel, setHotel] = useState(null)
+  const [rooms, setRooms] = useState([])
+  const [selectedRoom, setSelectedRoom] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [message, setMessage] = useState('')
@@ -16,6 +18,7 @@ export default function HotelDetails(){
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewComment, setReviewComment] = useState('')
   const [reviewError, setReviewError] = useState('')
+  const [loadingRooms, setLoadingRooms] = useState(false)
 
   useEffect(()=>{
     const loadHotel = async () => {
@@ -28,6 +31,28 @@ export default function HotelDetails(){
     }
     loadHotel()
   },[id])
+
+  useEffect(() => {
+    if (!hotel) return
+    const loadRooms = async () => {
+      setLoadingRooms(true)
+      try {
+        const res = await api.get(`/rooms/hotel/${hotel._id}`)
+        setRooms(res.data.data || [])
+      } catch {
+        setRooms([])
+      } finally {
+        setLoadingRooms(false)
+      }
+    }
+    loadRooms()
+  }, [hotel])
+
+  useEffect(() => {
+    if (rooms.length && !selectedRoom) {
+      setSelectedRoom(rooms[0]._id)
+    }
+  }, [rooms, selectedRoom])
 
   useEffect(() => {
     const loadReviews = async () => {
@@ -54,6 +79,16 @@ export default function HotelDetails(){
     loadWishlistStatus()
   }, [user, hotel])
 
+  const roomPrice = selectedRoom
+    ? rooms.find(room => room._id === selectedRoom)?.price || hotel.price
+    : hotel.price
+
+  const nights = startDate && endDate
+    ? Math.max(0, Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)))
+    : 0
+
+  const estimatedTotal = nights > 0 ? roomPrice * nights : 0
+
   const handleReserve = async e => {
     e.preventDefault()
     if (!user) {
@@ -62,7 +97,12 @@ export default function HotelDetails(){
     }
 
     try {
-      await api.post('/reservation', { hotel: id, startDate, endDate })
+      await api.post('/reservation', {
+        hotel: id,
+        room: selectedRoom || undefined,
+        startDate,
+        endDate
+      })
       setMessage('Reservation submitted successfully.')
       setStartDate('')
       setEndDate('')
@@ -117,6 +157,55 @@ export default function HotelDetails(){
               {hotel.availability && <span className="stat-pill">{hotel.availability.available ? `${hotel.availability.availableRooms || 'Available'} rooms` : 'Sold out'}</span>}
             </div>
 
+            {hotel.amenities?.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-lg font-semibold mb-3">Top amenities</h4>
+                <div className="flex flex-wrap gap-2">
+                  {hotel.amenities.map(amenity => (
+                    <span key={amenity} className="amenity-pill">{amenity}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold mb-3">Room options</h4>
+              {loadingRooms ? (
+                <p className="text-gray-600">Loading rooms...</p>
+              ) : rooms.length === 0 ? (
+                <p className="text-gray-600">No room types available yet for this hotel.</p>
+              ) : (
+                <div className="space-y-3">
+                  {rooms.map(room => (
+                    <label
+                      key={room._id}
+                      className={`room-card ${selectedRoom === room._id ? 'border-indigo-500 bg-indigo-50' : ''}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="radio"
+                          name="selectedRoom"
+                          value={room._id}
+                          checked={selectedRoom === room._id}
+                          onChange={() => setSelectedRoom(room._id)}
+                          className="mt-1"
+                        />
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <span className="font-semibold">{room.title}</span>
+                            <span className="pill">{room.type || 'Room'}</span>
+                            <span className="pill">{room.capacity} guests</span>
+                          </div>
+                          <p className="text-sm text-gray-600">{room.description || 'Smartly designed room for a comfortable stay.'}</p>
+                          <p className="mt-2 font-semibold text-indigo-600">${room.price} / night</p>
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="image-grid mt-4">
               {hotel.images?.slice(0, 3).map((src, i) => (
                 <img key={i} src={src} alt={`Hotel image ${i + 1}`} className="w-full h-44 object-cover rounded" />
@@ -162,7 +251,7 @@ export default function HotelDetails(){
                 <label className="block text-sm font-medium">Comment</label>
                 <textarea value={reviewComment} onChange={e => setReviewComment(e.target.value)} className="input" rows="4" placeholder="Write your experience..."></textarea>
               </div>
-              {reviewError && <div className="alert">{reviewError}</div>}
+              {reviewError && <div className="alert error">{reviewError}</div>}
               <button className="btn w-full" type="submit">Submit Review</button>
             </form>
           ) : (
@@ -176,7 +265,7 @@ export default function HotelDetails(){
             <p className="mt-2 text-gray-600">Choose your dates and confirm instantly. Logged-in users can save hotels to wishlist and manage bookings.</p>
           </div>
 
-          {message && <div className="alert">{message}</div>}
+          {message && <div className="alert success">{message}</div>}
 
           <form onSubmit={handleReserve} className="space-y-4">
             <div>
@@ -186,6 +275,16 @@ export default function HotelDetails(){
             <div>
               <label className="block text-sm font-medium">Check-out</label>
               <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} className="input" required />
+            </div>
+            <div className="booking-summary">
+              <div>
+                <p className="text-sm text-gray-600">Rate</p>
+                <p className="font-semibold">${roomPrice} / night</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Estimated total</p>
+                <p className="font-semibold">{estimatedTotal > 0 ? `$${estimatedTotal}` : 'Select dates'}</p>
+              </div>
             </div>
             <button className="btn w-full" type="submit">Reserve now</button>
             {user && (
