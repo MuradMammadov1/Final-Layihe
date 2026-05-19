@@ -11,12 +11,32 @@ export default function HotelDetails(){
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [message, setMessage] = useState('')
+  const [saved, setSaved] = useState(false)
 
   useEffect(()=>{
-    api.get(`/hotels/${id}`)
-      .then(r=>setHotel(r.data.data))
-      .catch(()=>setHotel(null))
+    const loadHotel = async () => {
+      try {
+        const res = await api.get(`/hotels/${id}`)
+        setHotel(res.data.data)
+      } catch {
+        setHotel(null)
+      }
+    }
+    loadHotel()
   },[id])
+
+  useEffect(() => {
+    if (!user || !hotel) return
+    const loadWishlistStatus = async () => {
+      try {
+        const res = await api.get('/wishlist')
+        setSaved(res.data.data.some(item => item._id === hotel._id))
+      } catch {
+        setSaved(false)
+      }
+    }
+    loadWishlistStatus()
+  }, [user, hotel])
 
   const handleReserve = async e => {
     e.preventDefault()
@@ -40,15 +60,50 @@ export default function HotelDetails(){
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-2xl font-semibold">{hotel.name}</h2>
-        <p className="text-sm text-gray-600">{hotel.city}</p>
-        <p className="mt-2 font-bold text-indigo-600">${hotel.price} per night</p>
+        <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
+          <div>
+            <h2 className="text-2xl font-semibold">{hotel.name}</h2>
+            <p className="text-sm text-gray-600 mt-1">{hotel.city}</p>
+          </div>
+          <div className="text-right">
+            <div className="text-lg font-semibold text-indigo-600">${hotel.price} / night</div>
+            {hotel.rating && <div className="text-sm text-gray-500">Rating: {hotel.rating.toFixed(1)}</div>}
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {hotel.availability && (
+            <span className={`px-3 py-1 rounded text-sm ${hotel.availability.available ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+              {hotel.availability.available ? `${hotel.availability.availableRooms || 'Some'} rooms available` : 'No rooms available'}
+            </span>
+          )}
+        </div>
         <div className="mt-4 grid grid-cols-2 gap-2">
           {hotel.images?.map((src,i)=> (
             <img key={i} src={src} alt="img" className="w-full h-48 object-cover rounded" />
           ))}
         </div>
         <p className="mt-4 text-gray-700">{hotel.description}</p>
+        {user && (
+          <button
+            type="button"
+            className="mt-5 btn"
+            onClick={async () => {
+              try {
+                if (saved) {
+                  await api.delete(`/wishlist/${hotel._id}`)
+                  setSaved(false)
+                } else {
+                  await api.post(`/wishlist/${hotel._id}`)
+                  setSaved(true)
+                }
+              } catch {
+                setMessage('Wishlist update failed.')
+              }
+            }}
+          >
+            {saved ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          </button>
+        )}
       </div>
 
       <div className="bg-white p-6 rounded shadow max-w-md">

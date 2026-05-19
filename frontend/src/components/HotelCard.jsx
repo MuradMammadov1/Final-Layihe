@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-export default function HotelCard({hotel}){
+export default function HotelCard({ hotel, saved, onToggleWishlist }){
   return (
     <div className="bg-white rounded shadow p-4">
       <img src={hotel.images?.[0] || '/placeholder.png'} alt={hotel.name} className="w-full h-40 object-cover rounded" />
@@ -11,6 +11,15 @@ export default function HotelCard({hotel}){
         <div className="text-indigo-600 font-bold">${hotel.price}</div>
         <Link to={`/hotels/${hotel._id}`} className="text-sm text-indigo-500">View</Link>
       </div>
+      {typeof onToggleWishlist === 'function' && (
+        <button
+          type="button"
+          onClick={onToggleWishlist}
+          className="mt-4 btn w-full"
+        >
+          {saved ? 'Remove from Wishlist' : 'Save to Wishlist'}
+        </button>
+      )}
     </div>
   )
 }

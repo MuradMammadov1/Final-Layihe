@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import HotelCard from '../components/HotelCard'
-import axios from 'axios'
+import api from '../api'
+import { AuthContext } from '../context/AuthContext'
 
 export default function Hotels(){
   const [hotels, setHotels] = useState([])
@@ -9,14 +10,14 @@ export default function Hotels(){
   const [maxPrice, setMaxPrice] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [wishlistIds, setWishlistIds] = useState([])
   const [loading, setLoading] = useState(false)
+  const { user } = useContext(AuthContext)
 
   const loadHotels = async (params = {}) => {
     setLoading(true)
     try {
-      const query = new URLSearchParams(params).toString()
-      const url = query ? `/api/hotels?${query}` : '/api/hotels'
-      const res = await axios.get(url)
+      const res = await api.get('/hotels', { params })
       setHotels(res.data.data || [])
     } catch (err) {
       setHotels([])
@@ -25,9 +26,26 @@ export default function Hotels(){
     }
   }
 
+  const loadWishlist = async () => {
+    if (!user) {
+      setWishlistIds([])
+      return
+    }
+    try {
+      const res = await api.get('/wishlist')
+      setWishlistIds(res.data.data.map(item => item._id))
+    } catch {
+      setWishlistIds([])
+    }
+  }
+
   useEffect(() => {
     loadHotels()
   }, [])
+
+  useEffect(() => {
+    loadWishlist()
+  }, [user])
 
   const handleSearch = e => {
     e.preventDefault()
@@ -69,7 +87,26 @@ export default function Hotels(){
           <div className="bg-white p-6 rounded shadow">No hotels found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {hotels.map(h => <HotelCard key={h._id} hotel={h} />)}
+            {hotels.map(h => (
+              <HotelCard
+                key={h._id}
+                hotel={h}
+                saved={wishlistIds.includes(h._id)}
+                onToggleWishlist={user ? async () => {
+                  try {
+                    if (wishlistIds.includes(h._id)) {
+                      await api.delete(`/wishlist/${h._id}`)
+                      setWishlistIds(prev => prev.filter(id => id !== h._id))
+                    } else {
+                      await api.post(`/wishlist/${h._id}`)
+                      setWishlistIds(prev => [...prev, h._id])
+                    }
+                  } catch (err) {
+                    console.warn('Wishlist update failed', err)
+                  }
+                } : undefined}
+              />
+            ))}
           </div>
         )}
       </div>
