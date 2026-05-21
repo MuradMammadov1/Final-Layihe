@@ -1,9 +1,11 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import SiteHeader from './components/SiteHeader'
+import Footer from './components/Footer'
 import Home from './pages/Home'
 import Hotels from './pages/Hotels'
 import HotelDetails from './pages/HotelDetails'
+import Contact from './pages/Contact'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -14,15 +16,31 @@ import RoomManager from './pages/Admin/RoomManager'
 import ReservationManager from './pages/Admin/ReservationManager'
 import AdminGuard from './components/AdminGuard'
 
-export default function App(){
+function MainShell({ children }) {
+  const { pathname } = useLocation()
+  const fullBleed =
+    pathname === '/' ||
+    pathname === '/contact' ||
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/profile'
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main className="container mx-auto px-4 py-6">
+    <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
+      {children}
+    </main>
+  )
+}
+
+export default function App() {
+  return (
+    <div className="min-h-screen app-shell">
+      <SiteHeader />
+      <MainShell>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/hotels" element={<Hotels />} />
           <Route path="/hotels/:id" element={<HotelDetails />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
@@ -33,7 +51,8 @@ export default function App(){
             <Route path="reservations" element={<ReservationManager />} />
           </Route>
         </Routes>
-      </main>
+      </MainShell>
+      <Footer />
     </div>
   )
 }

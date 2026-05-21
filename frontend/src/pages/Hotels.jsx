@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import HotelCard from '../components/HotelCard'
 import api from '../api'
 import { AuthContext } from '../context/AuthContext'
 
 export default function Hotels(){
+  const [searchParams] = useSearchParams()
   const [hotels, setHotels] = useState([])
   const [city, setCity] = useState('')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
   const [rating, setRating] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [startDate, setStartDate] = useState(() => searchParams.get('startDate') || '')
+  const [endDate, setEndDate] = useState(() => searchParams.get('endDate') || '')
   const [wishlistIds, setWishlistIds] = useState([])
   const [loading, setLoading] = useState(false)
   const { user } = useContext(AuthContext)
@@ -53,34 +55,48 @@ export default function Hotels(){
     loadHotels({ city, minPrice, maxPrice, rating, startDate, endDate })
   }
 
+  const handleReset = () => {
+    setCity('')
+    setMinPrice('')
+    setMaxPrice('')
+    setRating('')
+    setStartDate('')
+    setEndDate('')
+    loadHotels()
+  }
+
   return (
     <div className="space-y-8">
+      <header className="page-banner">
+        <h1 className="page-hero-title">Otellər</h1>
+        <p className="page-hero-sub">Bakı və Azərbaycan üzrə seçilmiş otellər.</p>
+      </header>
       <div className="panel max-w-full">
         <div className="flex flex-col lg:flex-row gap-6 lg:items-end justify-between">
           <div>
-            <h2 className="text-2xl font-semibold">Search Hotels</h2>
-            <p className="text-gray-600 mt-2">Find the best hotel for your next trip with flexible filters and real-time search.</p>
+            <h2 className="section-heading">Otel axtar</h2>
+            <p className="text-gray-600 mt-2">Növbəti səyahətiniz üçün ən yaxşı oteli tapın.</p>
           </div>
-          <div className="text-right text-sm text-gray-500">{hotels.length} hotels available</div>
+          <div className="text-right text-sm text-gray-500">{hotels.length} otel tapıldı</div>
         </div>
 
-        <form onSubmit={handleSearch} className="grid gap-4 md:grid-cols-5 mt-6">
+        <form onSubmit={handleSearch} className="grid gap-4 hotel-filter-grid mt-6">
           <div>
-            <label className="block text-sm font-medium">City</label>
-            <input value={city} onChange={e => setCity(e.target.value)} className="input" placeholder="Baku" />
+            <label className="block text-sm font-medium">Şəhər</label>
+            <input value={city} onChange={e => setCity(e.target.value)} className="input" placeholder="Bakı" />
           </div>
           <div>
-            <label className="block text-sm font-medium">Min Price</label>
+            <label className="block text-sm font-medium">Min qiymət</label>
             <input value={minPrice} onChange={e => setMinPrice(e.target.value)} className="input" type="number" placeholder="0" />
           </div>
           <div>
-            <label className="block text-sm font-medium">Max Price</label>
+            <label className="block text-sm font-medium">Maks qiymət</label>
             <input value={maxPrice} onChange={e => setMaxPrice(e.target.value)} className="input" type="number" placeholder="500" />
           </div>
           <div>
-            <label className="block text-sm font-medium">Min Rating</label>
+            <label className="block text-sm font-medium">Min reytinq</label>
             <select value={rating} onChange={e => setRating(e.target.value)} className="input">
-              <option value="">Any</option>
+              <option value="">Fərqi yoxdur</option>
               <option value="1">1+</option>
               <option value="2">2+</option>
               <option value="3">3+</option>
@@ -88,22 +104,33 @@ export default function Hotels(){
               <option value="5">5</option>
             </select>
           </div>
+          <div>
+            <label className="block text-sm font-medium">Giriş</label>
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="input" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Çıxış</label>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} min={startDate || undefined} className="input" />
+          </div>
           <div className="flex items-end">
-            <button className="btn w-full" type="submit">Search</button>
+            <button className="btn w-full" type="submit">Axtar</button>
+          </div>
+          <div className="flex items-end">
+            <button className="btn btn-outline-gold w-full" type="button" onClick={handleReset}>Təmizlə</button>
           </div>
         </form>
       </div>
 
       <div>
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-semibold">Available hotels</h2>
-          <span className="badge">{hotels.length} results</span>
+          <h2 className="text-2xl font-semibold">Mövcud otellər</h2>
+          <span className="badge">{hotels.length} nəticə</span>
         </div>
 
         {loading ? (
-          <div className="panel text-center">Loading hotels...</div>
+          <div className="panel text-center">Otellər yüklənir...</div>
         ) : hotels.length === 0 ? (
-          <div className="panel">No hotels found.</div>
+          <div className="panel">Filtrə uyğun otel tapılmadı.</div>
         ) : (
           <div className="grid gap-4 hotel-grid mt-4">
             {hotels.map(h => (

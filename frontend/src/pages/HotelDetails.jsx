@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import api from '../api'
 import { AuthContext } from '../context/AuthContext'
+import { hotelImage } from '../data/images'
 
 export default function HotelDetails(){
   const { id } = useParams()
@@ -103,11 +104,11 @@ export default function HotelDetails(){
         startDate,
         endDate
       })
-      setMessage('Reservation submitted successfully.')
+      setMessage('Bron uğurla göndərildi.')
       setStartDate('')
       setEndDate('')
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Reservation failed.')
+      setMessage(err.response?.data?.message || 'Bron alınmadı.')
     }
   }
 
@@ -138,28 +139,34 @@ export default function HotelDetails(){
     }
   }
 
-  if (!hotel) return <div>Loading...</div>
+  if (!hotel) return <div className="container py-12 text-center text-gray-600">Yüklənir...</div>
 
   return (
     <div className="space-y-8">
+      <div
+        className="detail-hero"
+        style={{ backgroundImage: `url(${hotelImage(hotel)})` }}
+        role="img"
+        aria-label={hotel.name}
+      />
       <div className="detail-grid">
         <div className="detail-card">
           <div className="flex flex-col gap-4">
             <div>
               <span className="badge">{hotel.city}</span>
               <h2 className="text-3xl font-semibold mt-4">{hotel.name}</h2>
-              <p className="text-gray-600 mt-3">{hotel.description || 'Explore premium hotel rooms, modern amenities, and convenient booking options for your next stay.'}</p>
+              <p className="text-gray-600 mt-3">{hotel.description || 'Premium otaqlar, müasir imkanlar və növbəti qonaqlığınız üçün rahat bron.'}</p>
             </div>
 
             <div className="hotel-details-meta">
-              <span className="stat-pill">${hotel.price} / night</span>
-              {hotel.rating && <span className="stat-pill">Rating {hotel.rating.toFixed(1)}</span>}
-              {hotel.availability && <span className="stat-pill">{hotel.availability.available ? `${hotel.availability.availableRooms || 'Available'} rooms` : 'Sold out'}</span>}
+              <span className="stat-pill">${hotel.price} / gecə</span>
+              {hotel.rating && <span className="stat-pill">Reytinq {hotel.rating.toFixed(1)}</span>}
+              {hotel.availability && <span className="stat-pill">{hotel.availability.available ? `${hotel.availability.availableRooms || 'Mövcud'} otaq` : 'Dolu'}</span>}
             </div>
 
             {hotel.amenities?.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-lg font-semibold mb-3">Top amenities</h4>
+                <h4 className="text-lg font-semibold mb-3">Əsas imkanlar</h4>
                 <div className="flex flex-wrap gap-2">
                   {hotel.amenities.map(amenity => (
                     <span key={amenity} className="amenity-pill">{amenity}</span>
@@ -169,17 +176,17 @@ export default function HotelDetails(){
             )}
 
             <div className="mt-4">
-              <h4 className="text-lg font-semibold mb-3">Room options</h4>
+              <h4 className="text-lg font-semibold mb-3">Otaq növləri</h4>
               {loadingRooms ? (
-                <p className="text-gray-600">Loading rooms...</p>
+                <p className="text-gray-600">Otaqlar yüklənir...</p>
               ) : rooms.length === 0 ? (
-                <p className="text-gray-600">No room types available yet for this hotel.</p>
+                <p className="text-gray-600">Bu otel üçün hələ otaq tipi əlavə edilməyib.</p>
               ) : (
                 <div className="space-y-3">
                   {rooms.map(room => (
                     <label
                       key={room._id}
-                      className={`room-card ${selectedRoom === room._id ? 'border-indigo-500 bg-indigo-50' : ''}`}
+                      className={`room-card ${selectedRoom === room._id ? 'room-card-selected' : ''}`}
                     >
                       <div className="flex items-start gap-3">
                         <input
@@ -193,11 +200,11 @@ export default function HotelDetails(){
                         <div>
                           <div className="flex flex-wrap items-center gap-2 mb-2">
                             <span className="font-semibold">{room.title}</span>
-                            <span className="pill">{room.type || 'Room'}</span>
-                            <span className="pill">{room.capacity} guests</span>
+                            <span className="pill">{room.type || 'Otaq'}</span>
+                            <span className="pill">{room.capacity} nəfər</span>
                           </div>
-                          <p className="text-sm text-gray-600">{room.description || 'Smartly designed room for a comfortable stay.'}</p>
-                          <p className="mt-2 font-semibold text-indigo-600">${room.price} / night</p>
+                          <p className="text-sm text-gray-600">{room.description || 'Rahat qonaqlıq üçün düşünülmüş otaq.'}</p>
+                          <p className="mt-2 font-semibold text-indigo-600">${room.price} / gecə</p>
                         </div>
                       </div>
                     </label>
@@ -208,14 +215,14 @@ export default function HotelDetails(){
 
             <div className="image-grid mt-4">
               {hotel.images?.slice(0, 3).map((src, i) => (
-                <img key={i} src={src} alt={`Hotel image ${i + 1}`} className="w-full h-44 object-cover rounded" />
+                <img key={i} src={src} alt={`Otel şəkli ${i + 1}`} className="w-full h-44 object-cover rounded" />
               ))}
             </div>
           </div>
         </div>
 
         <div className="detail-card">
-          <h3 className="text-xl font-semibold mb-4">Guest Reviews</h3>
+          <h3 className="text-xl font-semibold mb-4">Qonaq rəyləri</h3>
           {reviews.length === 0 ? (
             <p className="text-gray-600">Hələ bir rəy yazılmayıb.</p>
           ) : (
@@ -238,21 +245,21 @@ export default function HotelDetails(){
           {user ? (
             <form onSubmit={handleSubmitReview} className="space-y-4 mt-6">
               <div>
-                <label className="block text-sm font-medium">Your rating</label>
+                <label className="block text-sm font-medium">Reytinqiniz</label>
                 <select value={reviewRating} onChange={e => setReviewRating(Number(e.target.value))} className="input">
-                  <option value={5}>5 - Excellent</option>
-                  <option value={4}>4 - Very good</option>
-                  <option value={3}>3 - Good</option>
-                  <option value={2}>2 - Fair</option>
-                  <option value={1}>1 - Poor</option>
+                  <option value={5}>5 — Əla</option>
+                  <option value={4}>4 — Çox yaxşı</option>
+                  <option value={3}>3 — Yaxşı</option>
+                  <option value={2}>2 — Orta</option>
+                  <option value={1}>1 — Zəif</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium">Comment</label>
-                <textarea value={reviewComment} onChange={e => setReviewComment(e.target.value)} className="input" rows="4" placeholder="Write your experience..."></textarea>
+                <label className="block text-sm font-medium">Rəy</label>
+                <textarea value={reviewComment} onChange={e => setReviewComment(e.target.value)} className="input" rows="4" placeholder="Təcrübənizi yazın..."></textarea>
               </div>
               {reviewError && <div className="alert error">{reviewError}</div>}
-              <button className="btn w-full" type="submit">Submit Review</button>
+              <button className="btn btn-gold w-full" type="submit">Rəy göndər</button>
             </form>
           ) : (
             <p className="mt-6 text-gray-600">Rəy yazmaq üçün daxil olun.</p>
@@ -261,32 +268,32 @@ export default function HotelDetails(){
 
         <div className="detail-card detail-summary">
           <div>
-            <h3 className="text-xl font-semibold">Reservation details</h3>
-            <p className="mt-2 text-gray-600">Choose your dates and confirm instantly. Logged-in users can save hotels to wishlist and manage bookings.</p>
+            <h3 className="text-xl font-semibold">Bron məlumatları</h3>
+            <p className="mt-2 text-gray-600">Tarixləri seçin və təsdiqləyin. Daxil olmuş istifadəçilər oteli seçilmişlərə əlavə edə bilər.</p>
           </div>
 
           {message && <div className="alert success">{message}</div>}
 
           <form onSubmit={handleReserve} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium">Check-in</label>
+              <label className="block text-sm font-medium">Giriş</label>
               <input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)} className="input" required />
             </div>
             <div>
-              <label className="block text-sm font-medium">Check-out</label>
+              <label className="block text-sm font-medium">Çıxış</label>
               <input type="date" value={endDate} onChange={e=>setEndDate(e.target.value)} className="input" required />
             </div>
             <div className="booking-summary">
               <div>
-                <p className="text-sm text-gray-600">Rate</p>
-                <p className="font-semibold">${roomPrice} / night</p>
+                <p className="text-sm text-gray-600">Gecəlik</p>
+                <p className="font-semibold">${roomPrice} / gecə</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Estimated total</p>
-                <p className="font-semibold">{estimatedTotal > 0 ? `$${estimatedTotal}` : 'Select dates'}</p>
+                <p className="text-sm text-gray-600">Təxmini cəmi</p>
+                <p className="font-semibold">{estimatedTotal > 0 ? `$${estimatedTotal}` : 'Tarix seçin'}</p>
               </div>
             </div>
-            <button className="btn w-full" type="submit">Reserve now</button>
+            <button className="btn btn-gold w-full" type="submit">İndi bron et</button>
             {user && (
               <button
                 type="button"
@@ -301,11 +308,11 @@ export default function HotelDetails(){
                       setSaved(true)
                     }
                   } catch {
-                    setMessage('Wishlist update failed.')
+                    setMessage('Seçilmişlər yenilənmədi.')
                   }
                 }}
               >
-                {saved ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                {saved ? 'Seçilmişlərdən sil' : 'Seçilmişlərə əlavə et'}
               </button>
             )}
           </form>
