@@ -1346,6 +1346,38 @@ button, input, select, textarea { font: inherit; }
   color: var(--gold);
 }
 
+.rooms-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.room-card {
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.room-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+}
+
+.room-card-image {
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.room-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.room-card-content {
+  padding: 1.5rem;
+}
+
 .admin-nav-link {
   padding: 0.85rem 1.1rem;
   border-radius: 0.95rem;

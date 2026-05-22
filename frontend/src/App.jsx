@@ -5,6 +5,9 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import Hotels from './pages/Hotels'
 import HotelDetails from './pages/HotelDetails'
+import About from './pages/About'
+import Rooms from './pages/Rooms'
+import Blog from './pages/Blog'
 import Contact from './pages/Contact'
 import Gallery from './pages/Gallery'
 import Login from './pages/Login'
@@ -25,7 +28,10 @@ function MainShell({ children }) {
     pathname === '/login' ||
     pathname === '/register' ||
     pathname === '/profile' ||
-    pathname === '/gallery'
+    pathname === '/gallery' ||
+    pathname === '/about' ||
+    pathname === '/rooms' ||
+    pathname === '/blog'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
       {children}
@@ -42,6 +48,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/hotels" element={<Hotels />} />
           <Route path="/hotels/:id" element={<HotelDetails />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/rooms" element={<Rooms />} />
+          <Route path="/blog" element={<Blog />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />

@@ -29,6 +29,9 @@ export default function Footer() {
         <FooterCol title="Keçidlər">
           <Link to="/">Ana səhifə</Link>
           <Link to="/hotels">Otellər</Link>
+          <Link to="/rooms">Otaqlar</Link>
+          <Link to="/about">Haqqımızda</Link>
+          <Link to="/blog">Bloq</Link>
           <Link to="/gallery">Qalereya</Link>
           <Link to="/contact">Əlaqə</Link>
         </FooterCol>
