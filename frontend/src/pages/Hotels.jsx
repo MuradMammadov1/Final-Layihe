@@ -15,15 +15,19 @@ export default function Hotels(){
   const [endDate, setEndDate] = useState(() => searchParams.get('endDate') || '')
   const [wishlistIds, setWishlistIds] = useState([])
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const { user } = useContext(AuthContext)
 
   const loadHotels = async (params = {}) => {
     setLoading(true)
     try {
-      const res = await api.get('/hotels', { params })
+      const res = await api.get('/hotels', { params: { ...params, page, limit: 9 } })
       setHotels(res.data.data || [])
+      setTotalPages(res.data.pagination?.pages || 1)
     } catch (err) {
       setHotels([])
+      setTotalPages(1)
     } finally {
       setLoading(false)
     }
@@ -44,7 +48,7 @@ export default function Hotels(){
 
   useEffect(() => {
     loadHotels()
-  }, [])
+  }, [page])
 
   useEffect(() => {
     loadWishlist()
@@ -52,6 +56,7 @@ export default function Hotels(){
 
   const handleSearch = e => {
     e.preventDefault()
+    setPage(1)
     loadHotels({ city, minPrice, maxPrice, rating, startDate, endDate })
   }
 
@@ -62,6 +67,7 @@ export default function Hotels(){
     setRating('')
     setStartDate('')
     setEndDate('')
+    setPage(1)
     loadHotels()
   }
 
@@ -132,28 +138,52 @@ export default function Hotels(){
         ) : hotels.length === 0 ? (
           <div className="panel">Filtrə uyğun otel tapılmadı.</div>
         ) : (
-          <div className="grid gap-4 hotel-grid mt-4">
-            {hotels.map(h => (
-              <HotelCard
-                key={h._id}
-                hotel={h}
-                saved={wishlistIds.includes(h._id)}
-                onToggleWishlist={user ? async () => {
-                  try {
-                    if (wishlistIds.includes(h._id)) {
-                      await api.delete(`/wishlist/${h._id}`)
-                      setWishlistIds(prev => prev.filter(id => id !== h._id))
-                    } else {
-                      await api.post(`/wishlist/${h._id}`)
-                      setWishlistIds(prev => [...prev, h._id])
+          <>
+            <div className="grid gap-4 hotel-grid mt-4">
+              {hotels.map(h => (
+                <HotelCard
+                  key={h._id}
+                  hotel={h}
+                  saved={wishlistIds.includes(h._id)}
+                  onToggleWishlist={user ? async () => {
+                    try {
+                      if (wishlistIds.includes(h._id)) {
+                        await api.delete(`/wishlist/${h._id}`)
+                        setWishlistIds(prev => prev.filter(id => id !== h._id))
+                      } else {
+                        await api.post(`/wishlist/${h._id}`)
+                        setWishlistIds(prev => [...prev, h._id])
+                      }
+                    } catch (err) {
+                      console.warn('Wishlist update failed', err)
                     }
-                  } catch (err) {
-                    console.warn('Wishlist update failed', err)
-                  }
-                } : undefined}
-              />
-            ))}
-          </div>
+                  } : undefined}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  className="btn secondary"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  Əvvəlki
+                </button>
+                <span className="text-gray-600">
+                  Səhifə {page} / {totalPages}
+                </span>
+                <button
+                  className="btn secondary"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Növbəti
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

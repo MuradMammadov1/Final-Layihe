@@ -20,6 +20,8 @@ export default function HotelDetails(){
   const [reviewComment, setReviewComment] = useState('')
   const [reviewError, setReviewError] = useState('')
   const [loadingRooms, setLoadingRooms] = useState(false)
+  const [availableDates, setAvailableDates] = useState([])
+  const [calendarMonth, setCalendarMonth] = useState(new Date())
 
   useEffect(()=>{
     const loadHotel = async () => {
@@ -79,6 +81,26 @@ export default function HotelDetails(){
     }
     loadWishlistStatus()
   }, [user, hotel])
+
+  // Availability calendar hesablaması
+  useEffect(() => {
+    if (!hotel) return
+    const today = new Date()
+    const dates = []
+    const nextMonth = new Date(today)
+    nextMonth.setMonth(nextMonth.getMonth() + 2)
+    
+    for (let d = new Date(today); d <= nextMonth; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0]
+      const isWeekend = d.getDay() === 0 || d.getDay() === 6
+      dates.push({
+        date: dateStr,
+        available: true,
+        price: isWeekend ? Math.round(hotel.price * 1.2) : hotel.price
+      })
+    }
+    setAvailableDates(dates)
+  }, [hotel])
 
   const roomPrice = selectedRoom
     ? rooms.find(room => room._id === selectedRoom)?.price || hotel.price
@@ -211,6 +233,74 @@ export default function HotelDetails(){
                   ))}
                 </div>
               )}
+            </div>
+
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold mb-3">Mövcudluq Təqvimi</h4>
+              <div className="panel">
+                <div className="flex items-center justify-between mb-4">
+                  <button 
+                    type="button" 
+                    className="btn secondary btn-sm"
+                    onClick={() => setCalendarMonth(new Date(calendarMonth.setMonth(calendarMonth.getMonth() - 1)))}
+                  >
+                    ←
+                  </button>
+                  <span className="font-semibold">
+                    {calendarMonth.toLocaleDateString('az-AZ', { month: 'long', year: 'numeric' })}
+                  </span>
+                  <button 
+                    type="button" 
+                    className="btn secondary btn-sm"
+                    onClick={() => setCalendarMonth(new Date(calendarMonth.setMonth(calendarMonth.getMonth() + 1)))}
+                  >
+                    →
+                  </button>
+                </div>
+                <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
+                  {['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'].map(day => (
+                    <div key={day} className="text-center text-sm font-medium text-gray-600">{day}</div>
+                  ))}
+                  {availableDates.slice(0, 35).map((dateInfo, idx) => {
+                    const date = new Date(dateInfo.date)
+                    const isCurrentMonth = date.getMonth() === calendarMonth.getMonth()
+                    const isSelected = startDate === dateInfo.date || endDate === dateInfo.date
+                    const isInRange = startDate && endDate && dateInfo.date >= startDate && dateInfo.date <= endDate
+                    
+                    return (
+                      <button
+                        key={dateInfo.date}
+                        type="button"
+                        disabled={!dateInfo.available || !isCurrentMonth}
+                        onClick={() => {
+                          if (!startDate || (startDate && endDate)) {
+                            setStartDate(dateInfo.date)
+                            setEndDate('')
+                          } else if (startDate && !endDate) {
+                            if (new Date(dateInfo.date) < new Date(startDate)) {
+                              setStartDate(dateInfo.date)
+                            } else {
+                              setEndDate(dateInfo.date)
+                            }
+                          }
+                        }}
+                        className={`p-2 text-sm rounded transition-all ${
+                          !dateInfo.available || !isCurrentMonth
+                            ? 'text-gray-300 cursor-not-allowed'
+                            : isSelected || isInRange
+                            ? 'bg-indigo-600 text-white'
+                            : 'hover:bg-indigo-100 cursor-pointer'
+                        }`}
+                      >
+                        <div>{date.getDate()}</div>
+                        {dateInfo.available && isCurrentMonth && (
+                          <div className="text-xs mt-1">${dateInfo.price}</div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
 
             <div className="image-grid mt-4">

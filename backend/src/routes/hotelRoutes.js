@@ -6,7 +6,8 @@ const {
     createHotel, 
     updateHotel, 
     deleteHotel,
-    getStats
+    getStats,
+    uploadImages
 } = require('../controllers/hotelController');
 
 // protect (giriş yoxlanışı) və authorize (rol yoxlanışı) middleware-lərini çağırırıq
@@ -17,6 +18,9 @@ const upload = require('../middleware/uploadMiddleware');
 router.route('/')
     .get(getHotels) // Hamı baxa bilər (Giriş tələb olunmur)
     .post(protect, authorize('admin'), upload.array('images', 5), createHotel); // Yalnız Admin otel yarada bilər
+
+// /api/hotels/upload
+router.post('/upload', protect, authorize('admin'), upload.array('images', 5), uploadImages);
 
 // /api/hotels/stats
 router.get('/stats', protect, authorize('admin'), getStats); // Admin statistikaları

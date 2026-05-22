@@ -5,6 +5,7 @@ export default function HotelManager(){
   const [hotels, setHotels] = useState([])
   const [form, setForm] = useState({ name: '', city: '', price: '', description: '', images: '' })
   const [message, setMessage] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   const loadHotels = async () => {
     try {
@@ -18,6 +19,30 @@ export default function HotelManager(){
   useEffect(() => { loadHotels() }, [])
 
   const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+
+  const handleImageUpload = async e => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    const formData = new FormData()
+    for (let i = 0; i < files.length; i++) {
+      formData.append('images', files[i])
+    }
+
+    try {
+      const res = await api.post('/hotels/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+      const imageUrls = res.data.urls || []
+      setForm(prev => ({ ...prev, images: [...prev.images.split(',').filter(Boolean), ...imageUrls].join(',') }))
+      setMessage('Şəkillər yükləndi.')
+    } catch (err) {
+      setMessage('Şəkil yüklənmədi.')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -69,8 +94,13 @@ export default function HotelManager(){
             <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Image URLs</label>
-            <input name="images" value={form.images} onChange={handleChange} className="input" placeholder="comma separated URLs" />
+            <label className="block text-sm font-medium">Şəkil yüklə</label>
+            <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="input" disabled={uploading} />
+            {uploading && <p className="text-sm text-gray-600 mt-1">Yüklənir...</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Və ya Image URLs</label>
+            <input name="images" value={form.images} onChange={handleChange} className="input" placeholder="vergüllə ayrılmış URL-lar" />
           </div>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium">Description</label>

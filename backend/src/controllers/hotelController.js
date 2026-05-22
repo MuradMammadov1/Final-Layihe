@@ -2,7 +2,7 @@ const Hotel = require('../models/Hotel');
 const Reservation = require('../models/Reservation');
 const Room = require('../models/Room');
 const Review = require('../models/Review');
-const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary.js');
 
 const buildDateOverlap = (startDate, endDate) => ({
     $or: [
@@ -166,6 +166,27 @@ exports.deleteHotel = async (req, res, next) => {
         await hotel.deleteOne();
 
         res.status(200).json({ success: true, message: 'Otel və bağlı məlumatlar silindi' });
+    } catch (error) { next(error); }
+};
+
+// POST - Şəkil yükləmə
+exports.uploadImages = async (req, res, next) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            res.status(400);
+            return next(new Error('Şəkil faylları tələb olunur'));
+        }
+
+        const imageUrls = [];
+        for (const file of req.files) {
+            const result = await cloudinary.uploader.upload(file.path);
+            imageUrls.push(result.secure_url);
+        }
+
+        res.status(200).json({
+            success: true,
+            urls: imageUrls
+        });
     } catch (error) { next(error); }
 };
 
