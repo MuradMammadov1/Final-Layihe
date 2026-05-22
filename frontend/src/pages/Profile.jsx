@@ -8,6 +8,9 @@ export default function Profile(){
   const [reservations, setReservations] = useState([])
   const [wishlist, setWishlist] = useState([])
   const [message, setMessage] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [editForm, setEditForm] = useState({ name: '', email: '' })
+  const [updateLoading, setUpdateLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -48,6 +51,27 @@ export default function Profile(){
     }
   }
 
+  const handleEditStart = () => {
+    setEditForm({ name: user.name, email: user.email })
+    setEditing(true)
+    setMessage('')
+  }
+
+  const handleUpdateProfile = async e => {
+    e.preventDefault()
+    setUpdateLoading(true)
+    try {
+      await api.put('/auth/me', editForm)
+      await reload()
+      setEditing(false)
+      setMessage('Profil yeniləndi.')
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Profil yenilənmədi.')
+    } finally {
+      setUpdateLoading(false)
+    }
+  }
+
   if (loading || !user) return <div className="container py-12 text-center text-gray-600">Yüklənir...</div>
 
   return (
@@ -66,14 +90,52 @@ export default function Profile(){
 
       <section className="container section-pad">
         <div className="panel max-w-xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h2 className="section-heading">{user.name}</h2>
-              <p className="text-sm text-gray-600">{user.email}</p>
-              <p className="mt-2 text-sm section-label" style={{ marginBottom: 0 }}>Şəxsi kabinet</p>
+          {editing ? (
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
+              <h2 className="section-heading">Profil redaktə</h2>
+              <div>
+                <label className="block text-sm font-medium">Ad</label>
+                <input
+                  value={editForm.name}
+                  onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                  className="input"
+                  required
+                  disabled={updateLoading}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">E-poçt</label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                  className="input"
+                  required
+                  disabled={updateLoading}
+                />
+              </div>
+              <div className="flex gap-2">
+                <button type="submit" className="btn" disabled={updateLoading}>
+                  {updateLoading ? 'Yenilənir...' : 'Yadda saxla'}
+                </button>
+                <button type="button" className="btn btn-outline-gold" onClick={() => setEditing(false)} disabled={updateLoading}>
+                  Ləğv et
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h2 className="section-heading">{user.name}</h2>
+                <p className="text-sm text-gray-600">{user.email}</p>
+                <p className="mt-2 text-sm section-label" style={{ marginBottom: 0 }}>Şəxsi kabinet</p>
+              </div>
+              <div className="flex gap-2">
+                <button className="btn btn-outline-gold" type="button" onClick={handleEditStart}>Redaktə et</button>
+                <button className="btn btn-outline-gold" type="button" onClick={logout}>Çıxış</button>
+              </div>
             </div>
-            <button className="btn btn-outline-gold" type="button" onClick={logout}>Çıxış</button>
-          </div>
+          )}
         </div>
 
         {message && <div className="alert max-w-xl mx-auto">{message}</div>}

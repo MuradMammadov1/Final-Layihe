@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import Hotels from './pages/Hotels'
 import HotelDetails from './pages/HotelDetails'
 import Contact from './pages/Contact'
+import Gallery from './pages/Gallery'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -23,7 +24,8 @@ function MainShell({ children }) {
     pathname === '/contact' ||
     pathname === '/login' ||
     pathname === '/register' ||
-    pathname === '/profile'
+    pathname === '/profile' ||
+    pathname === '/gallery'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
       {children}
@@ -40,6 +42,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/hotels" element={<Hotels />} />
           <Route path="/hotels/:id" element={<HotelDetails />} />
+          <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

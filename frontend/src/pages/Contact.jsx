@@ -1,18 +1,31 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../api'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = e => {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    setSent(true)
-    setForm({ name: '', email: '', subject: '', message: '' })
+    setLoading(true)
+    setError('')
+    try {
+      await api.post('/contact', form)
+      setSent(true)
+      setForm({ name: '', email: '', subject: '', message: '' })
+      setTimeout(() => setSent(false), 5000)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Mesaj göndərilmədi.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -55,25 +68,30 @@ export default function Contact() {
             {sent && (
               <div className="alert success">Mesajınız qəbul edildi. Tezliklə sizinlə əlaqə saxlayacağıq.</div>
             )}
+            {error && (
+              <div className="alert error">{error}</div>
+            )}
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium">Ad</label>
-                <input name="name" value={form.name} onChange={handleChange} className="input" required />
+                <input name="name" value={form.name} onChange={handleChange} className="input" required disabled={loading} />
               </div>
               <div>
                 <label className="block text-sm font-medium">E-poçt</label>
-                <input name="email" type="email" value={form.email} onChange={handleChange} className="input" required />
+                <input name="email" type="email" value={form.email} onChange={handleChange} className="input" required disabled={loading} />
               </div>
             </div>
             <div className="mt-4">
               <label className="block text-sm font-medium">Mövzu</label>
-              <input name="subject" value={form.subject} onChange={handleChange} className="input" required />
+              <input name="subject" value={form.subject} onChange={handleChange} className="input" required disabled={loading} />
             </div>
             <div className="mt-4">
               <label className="block text-sm font-medium">Mesaj</label>
-              <textarea name="message" value={form.message} onChange={handleChange} className="input" rows="6" required />
+              <textarea name="message" value={form.message} onChange={handleChange} className="input" rows="6" required disabled={loading} />
             </div>
-            <button type="submit" className="btn btn-gold mt-4 w-full">Göndər</button>
+            <button type="submit" className="btn btn-gold mt-4 w-full" disabled={loading}>
+              {loading ? 'Göndərilir...' : 'Göndər'}
+            </button>
           </form>
 
           <aside className="contact-map panel">

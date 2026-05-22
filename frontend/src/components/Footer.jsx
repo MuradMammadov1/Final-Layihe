@@ -19,10 +19,17 @@ export default function Footer() {
           <p className="footer-text">
             Peşəkar otel rezervasiya platforması — rahat otaqlar, sürətli bron və müasir qonaq təcrübəsi.
           </p>
+          <div className="footer-social mt-4">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">Facebook</a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">Twitter</a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">LinkedIn</a>
+          </div>
         </div>
         <FooterCol title="Keçidlər">
           <Link to="/">Ana səhifə</Link>
           <Link to="/hotels">Otellər</Link>
+          <Link to="/gallery">Qalereya</Link>
           <Link to="/contact">Əlaqə</Link>
         </FooterCol>
         <FooterCol title="Əlaqə">

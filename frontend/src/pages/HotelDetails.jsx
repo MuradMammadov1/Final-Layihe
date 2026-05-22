@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import api from '../api'
 import { AuthContext } from '../context/AuthContext'
 import { hotelImage } from '../data/images'
+import AvailabilityCalendar from '../components/AvailabilityCalendar'
 
 export default function HotelDetails(){
   const { id } = useParams()

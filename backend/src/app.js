@@ -91,6 +91,7 @@ app.use('/api/reservation', reservationRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/contact', require('./routes/contactRoutes'));
 
 // API docs (Swagger)
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

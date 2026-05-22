@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import HeroSlider from '../components/HeroSlider'
 import BookingBar from '../components/BookingBar'
 import HotelCard from '../components/HotelCard'
+import Newsletter from '../components/Newsletter'
 import api from '../api'
 import { ABOUT_IMAGE, DINING_IMAGE, POOL_IMAGE, ROOM_IMAGES } from '../data/images'
 import { HOME_NEWS, HOME_SERVICES, HOME_STATS } from '../data/siteContent'
@@ -158,6 +159,10 @@ export default function Home() {
           ))}
         </div>
       </div>
+    </section>
+
+    <section className="section-pad container">
+      <Newsletter />
     </section>
   </>
   )
