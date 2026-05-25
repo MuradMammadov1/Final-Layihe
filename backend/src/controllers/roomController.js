@@ -84,3 +84,12 @@ exports.getHotelRooms = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getAllRooms = async (req, res, next) => {
+    try {
+        const rooms = await Room.find().populate('hotel', 'name city');
+        res.status(200).json({ success: true, data: rooms });
+    } catch (error) {
+        next(error);
+    }
+};

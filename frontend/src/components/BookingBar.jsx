@@ -5,6 +5,7 @@ export default function BookingBar() {
   const navigate = useNavigate()
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
+  const [city, setCity] = useState('')
   const [adults, setAdults] = useState('2')
   const [children, setChildren] = useState('0')
   const [rooms, setRooms] = useState('1')
@@ -14,7 +15,8 @@ export default function BookingBar() {
     const params = new URLSearchParams()
     if (checkIn) params.set('startDate', checkIn)
     if (checkOut) params.set('endDate', checkOut)
-    navigate(`/hotels?${params.toString()}`)
+    if (city) params.set('city', city)
+    navigate(`/rooms?${params.toString()}`)
   }
 
   const Field = ({ label, children }) => (
@@ -26,6 +28,9 @@ export default function BookingBar() {
 
   return (
     <form className="booking-bar" onSubmit={handleBook}>
+      <Field label="Şəhər">
+        <input type="text" className="input" placeholder="Bakı, Quba..." value={city} onChange={e => setCity(e.target.value)} />
+      </Field>
       <Field label="Giriş tarixi">
         <input type="date" className="input" value={checkIn} onChange={e => setCheckIn(e.target.value)} />
       </Field>

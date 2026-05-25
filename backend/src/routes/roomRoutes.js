@@ -6,10 +6,12 @@ const {
     getRoom,
     updateRoom,
     deleteRoom,
-    getHotelRooms
+    getHotelRooms,
+    getAllRooms
 } = require('../controllers/roomController');
 
 router.route('/')
+    .get(getAllRooms)
     .post(protect, authorize('admin'), createRoom);
 
 router.route('/hotel/:hotelId')

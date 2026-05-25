@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../api'
 import { ROOM_IMAGES } from '../data/images'
 
 export default function Rooms() {
+  const [searchParams] = useSearchParams()
   const [rooms, setRooms] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState({ city: '', minPrice: '', maxPrice: '', type: '' })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const itemsPerPage = 6
+
+  useEffect(() => {
+    const cityParam = searchParams.get('city')
+    if (cityParam) {
+      setFilter(prev => ({ ...prev, city: cityParam }))
+    }
+  }, [searchParams])
 
   useEffect(() => {
     const loadRooms = async () => {

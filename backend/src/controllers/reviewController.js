@@ -45,7 +45,7 @@ exports.deleteReview = async (req, res, next) => {
 exports.updateReview = async (req, res, next) => {
     try {
         const { rating, comment } = req.body;
-        
+
         const review = await Review.findById(req.params.id);
         if (!review) {
             res.status(404);
@@ -66,5 +66,13 @@ exports.updateReview = async (req, res, next) => {
         await Hotel.findByIdAndUpdate(review.hotel, { rating: avgRating.toFixed(1) });
 
         res.status(200).json({ success: true, data: review });
+    } catch (error) { next(error); }
+};
+
+// GET - Bütün rəylər (admin üçün)
+exports.getAllReviews = async (req, res, next) => {
+    try {
+        const reviews = await Review.find().populate('user', 'name').populate('hotel', 'name');
+        res.status(200).json({ success: true, data: reviews });
     } catch (error) { next(error); }
 };

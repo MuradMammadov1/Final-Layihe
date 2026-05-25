@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    addReview, 
-    getHotelReviews, 
+const {
+    addReview,
+    getHotelReviews,
     deleteReview,
-    updateReview 
+    updateReview,
+    getAllReviews
 } = require('../controllers/reviewController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, authorize } = require('../middleware/authMiddleware');
 
 // /api/review
 router.route('/')
+    .get(protect, authorize('admin'), getAllReviews)
     .post(protect, addReview); // Rəy yaz
 
 // /api/review/:hotelId (Otelin rəylərini görmək üçün)

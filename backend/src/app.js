@@ -45,16 +45,26 @@ app.get('/api', (req, res) => {
         status: "Active",
         author: "Murad Məmmədov",
         endpoints: {
-            auth: ["POST /api/auth/register", "POST /api/auth/login", "GET /api/auth/me (Protect)", "PUT /api/auth/me (Protect)", "POST /register", "POST /login"],
+            auth: [
+                "POST /api/auth/register",
+                "POST /api/auth/login",
+                "GET /api/auth/me (Protect)",
+                "PUT /api/auth/me (Protect)",
+                "GET /api/auth/users (Admin)",
+                "PUT /api/auth/users/:id (Admin)",
+                "DELETE /api/auth/users/:id (Admin)"
+            ],
             hotels: [
-                "GET /api/hotels", 
-                "GET /api/hotels/:id", 
+                "GET /api/hotels",
+                "GET /api/hotels/:id",
                 "POST /api/hotels (Admin)",
                 "PUT /api/hotels/:id (Admin)",
                 "DELETE /api/hotels/:id (Admin)",
-                "GET /api/hotels/:id?startDate=...&endDate=..."
+                "GET /api/hotels/stats (Admin)",
+                "POST /api/hotels/upload (Admin)"
             ],
             rooms: [
+                "GET /api/rooms",
                 "POST /api/rooms (Admin)",
                 "GET /api/rooms/:id",
                 "PUT /api/rooms/:id (Admin)",
@@ -70,7 +80,8 @@ app.get('/api', (req, res) => {
                 "DELETE /api/reservation/:id (Protect)"
             ],
             reviews: [
-                "POST /api/review (Protect)", 
+                "GET /api/review (Admin)",
+                "POST /api/review (Protect)",
                 "GET /api/review/:hotelId",
                 "PUT /api/review/:id (Protect)",
                 "DELETE /api/review/:id (Protect)"

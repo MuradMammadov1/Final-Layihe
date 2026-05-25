@@ -108,3 +108,62 @@ exports.updateMe = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Bütün istifadəçiləri al (admin üçün)
+// @route   GET /api/auth/users
+exports.getAllUsers = async (req, res, next) => {
+    try {
+        const users = await User.find().select('-password');
+        res.status(200).json({ success: true, data: users });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    İstifadəçi rolunu dəyiş (admin üçün)
+// @route   PUT /api/auth/users/:id
+exports.updateUserRole = async (req, res, next) => {
+    try {
+        const { role } = req.body;
+        const user = await User.findByIdAndUpdate(req.params.id, { role }, {
+            new: true,
+            runValidators: true
+        }).select('-password');
+
+        if (!user) {
+            res.status(404);
+            return next(new Error('İstifadəçi tapılmadı'));
+        }
+
+        res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    İstifadəçini sil (admin üçün)
+// @route   DELETE /api/auth/users/:id
+exports.deleteUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            res.status(404);
+            return next(new Error('İstifadəçi tapılmadı'));
+        }
+
+        // İstifadəçinin rezervasiyalarını sil
+        const Reservation = require('../models/Reservation');
+        await Reservation.deleteMany({ user: user._id });
+
+        // İstifadəçinin rəylərini sil
+        const Review = require('../models/Review');
+        await Review.deleteMany({ user: user._id });
+
+        // İstifadəçini sil
+        await user.deleteOne();
+
+        res.status(200).json({ success: true, message: 'İstifadəçi silindi' });
+    } catch (error) {
+        next(error);
+    }
+};
