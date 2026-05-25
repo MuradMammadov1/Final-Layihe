@@ -14,12 +14,7 @@ export default function AdminGuard({ children }){
   }
 
   if (user.role !== 'admin') {
-    return (
-      <div className="bg-white p-6 rounded shadow">
-        <h2 className="text-2xl font-semibold">Access denied</h2>
-        <p className="mt-3 text-gray-600">You need admin privileges to access this section.</p>
-      </div>
-    )
+    return <Navigate to="/" replace />
   }
 
   return children

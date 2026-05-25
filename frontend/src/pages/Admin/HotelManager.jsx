@@ -4,6 +4,7 @@ import api from '../../api'
 export default function HotelManager(){
   const [hotels, setHotels] = useState([])
   const [form, setForm] = useState({ name: '', city: '', price: '', description: '', images: '' })
+  const [editingId, setEditingId] = useState(null)
   const [message, setMessage] = useState('')
   const [uploading, setUploading] = useState(false)
 
@@ -52,13 +53,35 @@ export default function HotelManager(){
         price: Number(form.price),
         images: form.images.split(',').map(url => url.trim()).filter(Boolean)
       }
-      await api.post('/hotels', payload)
-      setMessage('Hotel created successfully.')
+      if (editingId) {
+        await api.put(`/hotels/${editingId}`, payload)
+        setMessage('Hotel updated successfully.')
+      } else {
+        await api.post('/hotels', payload)
+        setMessage('Hotel created successfully.')
+      }
       setForm({ name: '', city: '', price: '', description: '', images: '' })
+      setEditingId(null)
       loadHotels()
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to create hotel.')
+      setMessage(err.response?.data?.message || 'Failed to save hotel.')
     }
+  }
+
+  const handleEdit = hotel => {
+    setForm({
+      name: hotel.name,
+      city: hotel.city,
+      price: hotel.price,
+      description: hotel.description,
+      images: Array.isArray(hotel.images) ? hotel.images.join(', ') : hotel.images
+    })
+    setEditingId(hotel._id)
+  }
+
+  const handleCancelEdit = () => {
+    setForm({ name: '', city: '', price: '', description: '', images: '' })
+    setEditingId(null)
   }
 
   const handleDelete = async id => {
@@ -82,15 +105,15 @@ export default function HotelManager(){
         {message && <div className="alert mt-4">{message}</div>}
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 mt-6">
           <div>
-            <label className="block text-sm font-medium">Name</label>
+            <label className="block text-sm font-medium">Ad</label>
             <input name="name" value={form.name} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">City</label>
+            <label className="block text-sm font-medium">Şəhər</label>
             <input name="city" value={form.city} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Price</label>
+            <label className="block text-sm font-medium">Qiymət</label>
             <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
           </div>
           <div>
@@ -103,11 +126,12 @@ export default function HotelManager(){
             <input name="images" value={form.images} onChange={handleChange} className="input" placeholder="vergüllə ayrılmış URL-lar" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium">Description</label>
+            <label className="block text-sm font-medium">Təsvir</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="input" />
           </div>
-          <div className="md:col-span-2">
-            <button className="btn">Create Hotel</button>
+          <div className="md:col-span-2 flex gap-2">
+            <button className="btn">{editingId ? 'Yenilə' : 'Yarat'}</button>
+            {editingId && <button type="button" onClick={handleCancelEdit} className="btn secondary">Ləğv et</button>}
           </div>
         </form>
       </div>
@@ -116,7 +140,7 @@ export default function HotelManager(){
         <h3 className="text-xl font-semibold mb-4">Existing Hotels</h3>
         <div className="space-y-3">
           {hotels.length === 0 ? (
-            <p className="text-gray-600">No hotels loaded yet.</p>
+            <p className="text-gray-600">Hələ otel yoxdur.</p>
           ) : hotels.map(hotel => (
             <div key={hotel._id} className="p-4 rounded border flex flex-col md:flex-row md:justify-between md:items-center gap-3">
               <div>
@@ -124,7 +148,10 @@ export default function HotelManager(){
                 <p className="text-sm text-gray-600">{hotel.city}</p>
                 <p className="mt-1 text-indigo-600 font-semibold">${hotel.price}</p>
               </div>
-              <button className="btn secondary" onClick={() => handleDelete(hotel._id)}>Delete</button>
+              <div className="flex gap-2">
+                <button className="btn secondary" onClick={() => handleEdit(hotel)}>Düzəlt</button>
+                <button className="btn secondary" onClick={() => handleDelete(hotel._id)}>Sil</button>
+              </div>
             </div>
           ))}
         </div>

@@ -5,6 +5,7 @@ export default function RoomManager(){
   const [hotels, setHotels] = useState([])
   const [rooms, setRooms] = useState([])
   const [form, setForm] = useState({ hotel: '', title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
+  const [editingId, setEditingId] = useState(null)
   const [message, setMessage] = useState('')
 
   const loadHotels = async () => {
@@ -48,13 +49,38 @@ export default function RoomManager(){
         description: form.description,
         amenities: form.amenities.split(',').map(item => item.trim()).filter(Boolean)
       }
-      await api.post('/rooms', payload)
-      setMessage('Room created successfully.')
+      if (editingId) {
+        await api.put(`/rooms/${editingId}`, payload)
+        setMessage('Otaq yeniləndi.')
+      } else {
+        await api.post('/rooms', payload)
+        setMessage('Otaq yaradıldı.')
+      }
       setForm({ hotel: form.hotel, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
+      setEditingId(null)
       loadRooms()
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Failed to create room.')
+      setMessage(err.response?.data?.message || 'Otaq saxlanılmadı.')
     }
+  }
+
+  const handleEdit = room => {
+    setForm({
+      hotel: room.hotel,
+      title: room.title,
+      price: room.price,
+      capacity: room.capacity,
+      count: room.count,
+      type: room.type,
+      description: room.description,
+      amenities: Array.isArray(room.amenities) ? room.amenities.join(', ') : room.amenities
+    })
+    setEditingId(room._id)
+  }
+
+  const handleCancelEdit = () => {
+    setForm({ hotel: form.hotel, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
+    setEditingId(null)
   }
 
   const handleDelete = async id => {
@@ -79,44 +105,45 @@ export default function RoomManager(){
 
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 mt-6">
           <div>
-            <label className="block text-sm font-medium">Hotel</label>
+            <label className="block text-sm font-medium">Otel</label>
             <select name="hotel" value={form.hotel} onChange={handleChange} className="input" required>
-              <option value="">Select hotel</option>
+              <option value="">Otel seçin</option>
               {hotels.map(hotel => (
                 <option key={hotel._id} value={hotel._id}>{hotel.name} — {hotel.city}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Room Title</label>
+            <label className="block text-sm font-medium">Otaq adı</label>
             <input name="title" value={form.title} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Price</label>
+            <label className="block text-sm font-medium">Qiymət</label>
             <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Capacity</label>
+            <label className="block text-sm font-medium">Nəfər sayı</label>
             <input name="capacity" type="number" value={form.capacity} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Count</label>
+            <label className="block text-sm font-medium">Say</label>
             <input name="count" type="number" value={form.count} onChange={handleChange} className="input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Type</label>
+            <label className="block text-sm font-medium">Növ</label>
             <input name="type" value={form.type} onChange={handleChange} className="input" placeholder="standard / deluxe" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium">Amenities</label>
-            <input name="amenities" value={form.amenities} onChange={handleChange} className="input" placeholder="Comma separated" />
+            <label className="block text-sm font-medium">Xidmətlər</label>
+            <input name="amenities" value={form.amenities} onChange={handleChange} className="input" placeholder="vergüllə ayrılmış" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium">Description</label>
+            <label className="block text-sm font-medium">Təsvir</label>
             <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="input" />
           </div>
-          <div className="md:col-span-2">
-            <button className="btn">Create Room</button>
+          <div className="md:col-span-2 flex gap-2">
+            <button className="btn">{editingId ? 'Yenilə' : 'Yarat'}</button>
+            {editingId && <button type="button" onClick={handleCancelEdit} className="btn secondary">Ləğv et</button>}
           </div>
         </form>
       </div>
@@ -124,17 +151,20 @@ export default function RoomManager(){
       <div className="panel">
         <h3 className="text-xl font-semibold mb-4">Existing Rooms</h3>
         {rooms.length === 0 ? (
-          <p className="text-gray-600">Select a hotel to view its rooms.</p>
+          <p className="text-gray-600">Otel seçin ki, otaqları görəsiniz.</p>
         ) : (
           <div className="space-y-4">
             {rooms.map(room => (
               <div key={room._id} className="border rounded p-4 bg-slate-50 flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                 <div>
                   <h4 className="font-semibold">{room.title}</h4>
-                  <p className="text-sm text-gray-600">{room.type} • Capacity {room.capacity} • {room.count} units</p>
+                  <p className="text-sm text-gray-600">{room.type} • {room.capacity} nəfər • {room.count} otaq</p>
                   <p className="text-indigo-600 font-semibold mt-2">${room.price}</p>
                 </div>
-                <button className="btn secondary" onClick={() => handleDelete(room._id)}>Delete</button>
+                <div className="flex gap-2">
+                  <button className="btn secondary" onClick={() => handleEdit(room)}>Düzəlt</button>
+                  <button className="btn secondary" onClick={() => handleDelete(room._id)}>Sil</button>
+                </div>
               </div>
             ))}
           </div>

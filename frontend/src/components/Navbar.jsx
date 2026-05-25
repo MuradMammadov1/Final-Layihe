@@ -41,16 +41,14 @@ export default function Navbar() {
 
         <div className={`nav-links-wrap ${menuOpen ? 'is-open' : ''}`}>
           <Link to="/" className="nav-link-pill">Ana səhifə</Link>
-          <Link to="/hotels" className="nav-link-pill">Otellər</Link>
           <Link to="/rooms" className="nav-link-pill">Otaqlar</Link>
           <Link to="/about" className="nav-link-pill">Haqqımızda</Link>
           <Link to="/blog" className="nav-link-pill">Bloq</Link>
-          <Link to="/gallery" className="nav-link-pill">Qalereya</Link>
           <Link to="/contact" className="nav-link-pill">Əlaqə</Link>
           {!loading && user ? (
             <>
               <Link to="/profile" className="nav-link-pill">{user.name}</Link>
-              {user.role === 'admin' && <Link to="/admin" className="nav-link-pill">Admin</Link>}
+              {user.role === 'admin' && <Link to="/admin" className="nav-link-pill">Admin Panel</Link>}
               <button onClick={doLogout} className="btn btn-outline-gold btn-sm">Çıxış</button>
             </>
           ) : (

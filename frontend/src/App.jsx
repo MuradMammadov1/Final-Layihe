@@ -3,13 +3,11 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import SiteHeader from './components/SiteHeader'
 import Footer from './components/Footer'
 import Home from './pages/Home'
-import Hotels from './pages/Hotels'
-import HotelDetails from './pages/HotelDetails'
+import RoomDetails from './pages/RoomDetails'
 import About from './pages/About'
 import Rooms from './pages/Rooms'
 import Blog from './pages/Blog'
 import Contact from './pages/Contact'
-import Gallery from './pages/Gallery'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -18,6 +16,8 @@ import Dashboard from './pages/Admin/Dashboard'
 import HotelManager from './pages/Admin/HotelManager'
 import RoomManager from './pages/Admin/RoomManager'
 import ReservationManager from './pages/Admin/ReservationManager'
+import UserManager from './pages/Admin/UserManager'
+import ReviewManager from './pages/Admin/ReviewManager'
 import AdminGuard from './components/AdminGuard'
 
 function MainShell({ children }) {
@@ -31,6 +31,7 @@ function MainShell({ children }) {
     pathname === '/gallery' ||
     pathname === '/about' ||
     pathname === '/rooms' ||
+    pathname === '/rooms/:id' ||
     pathname === '/blog'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
@@ -46,12 +47,10 @@ export default function App() {
       <MainShell>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/hotels" element={<Hotels />} />
-          <Route path="/hotels/:id" element={<HotelDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/rooms" element={<Rooms />} />
+          <Route path="/rooms/:id" element={<RoomDetails />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/gallery" element={<Gallery />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -61,6 +60,8 @@ export default function App() {
             <Route path="hotels" element={<HotelManager />} />
             <Route path="rooms" element={<RoomManager />} />
             <Route path="reservations" element={<ReservationManager />} />
+            <Route path="users" element={<UserManager />} />
+            <Route path="reviews" element={<ReviewManager />} />
           </Route>
         </Routes>
       </MainShell>

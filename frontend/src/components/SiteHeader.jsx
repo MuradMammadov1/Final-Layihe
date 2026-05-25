@@ -7,6 +7,9 @@ export default function SiteHeader() {
   const { pathname } = useLocation()
   const isAdmin = pathname.startsWith('/admin')
   const onHero = pathname === '/'
+  const isAuth = pathname === '/login' || pathname === '/register'
+
+  if (isAuth) return null
 
   return (
     <header className={`site-header ${onHero ? 'site-header--on-hero' : ''}`}>

@@ -29,7 +29,13 @@ export default function Rooms() {
     capacity: [2, 2, 2, 4, 2, 2][i],
     description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.',
     amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'],
-    hotel: { name: 'Aura Grand Hotel', city: 'Bakı' }
+    hotel: { 
+      _id: 'demo-hotel',
+      name: 'Aura Grand Hotel', 
+      city: 'Bakı',
+      description: 'Lüks və rahat qonaqlıq təcrübəsi.',
+      images: [img]
+    }
   }))
 
   return (
@@ -52,7 +58,7 @@ export default function Rooms() {
         ) : (
           <div className="rooms-grid">
             {demoRooms.map((room, idx) => (
-              <div key={room._id} className="room-card panel">
+              <Link key={room._id} to={`/rooms/${room._id}`} className="room-card panel">
                 <div className="room-card-image">
                   <img 
                     src={rooms.length ? (room.hotel?.images?.[0] || ROOM_IMAGES[0]) : ROOM_IMAGES[idx % ROOM_IMAGES.length]} 
@@ -74,9 +80,9 @@ export default function Rooms() {
                       <span key={i} className="amenity-pill text-xs">{amenity}</span>
                     ))}
                   </div>
-                  <Link to="/hotels" className="btn btn-gold w-full text-center">Rezerv et</Link>
+                  <button className="btn btn-gold w-full">Detallara bax</button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

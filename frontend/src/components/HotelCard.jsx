@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { hotelImage } from '../data/images'
 
 export default function HotelCard({ hotel, saved, onToggleWishlist, demo }) {
-  const detailPath = demo ? '/hotels' : `/hotels/${hotel._id}`
+  const detailPath = demo ? `/rooms/${hotel._id}` : `/rooms/${hotel._id}`
 
   return (
     <article className="hotel-card room-showcase">

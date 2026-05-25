@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../api'
 import { AuthContext } from '../context/AuthContext'
 import { hotelImage } from '../data/images'
@@ -127,9 +127,8 @@ export default function HotelDetails(){
         startDate,
         endDate
       })
-      setMessage('Bron uğurla göndərildi.')
-      setStartDate('')
-      setEndDate('')
+      alert('Rezervasiya uğurla tamamlandı!')
+      navigate('/hotels')
     } catch (err) {
       setMessage(err.response?.data?.message || 'Bron alınmadı.')
     }
@@ -228,6 +227,9 @@ export default function HotelDetails(){
                           </div>
                           <p className="text-sm text-gray-600">{room.description || 'Rahat qonaqlıq üçün düşünülmüş otaq.'}</p>
                           <p className="mt-2 font-semibold text-indigo-600">${room.price} / gecə</p>
+                          <Link to={`/rooms/${room._id}`} className="text-sm text-indigo-600 hover:underline mt-1 inline-block">
+                            Detallara bax →
+                          </Link>
                         </div>
                       </div>
                     </label>

@@ -52,7 +52,7 @@ export default function Home() {
             Dizayn ideyaları Marian (otel hero, otaqlar, blog) və Radisson (əlaqə, peşəkar başlıq)
             nümunələrinə uyğunlaşdırılıb — final layihə üçün təqdimat formatı.
           </p>
-          <Link to="/hotels" className="btn btn-gold mt-5">Ətraflı</Link>
+          <Link to="/rooms" className="btn btn-gold mt-5">Ətraflı</Link>
         </div>
       </div>
     </section>
@@ -83,7 +83,7 @@ export default function Home() {
           ))}
         </div>
         <div className="text-center mt-8">
-          <Link to="/hotels" className="btn btn-gold">Hamısına bax</Link>
+          <Link to="/rooms" className="btn btn-gold">Hamısına bax</Link>
         </div>
       </div>
     </section>
