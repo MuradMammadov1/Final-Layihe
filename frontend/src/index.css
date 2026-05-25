@@ -1378,6 +1378,16 @@ button, input, select, textarea { font: inherit; }
   padding: 1.5rem;
 }
 
+.amenity-pill {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--surface-soft);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
 .admin-nav-link {
   padding: 0.85rem 1.1rem;
   border-radius: 0.95rem;
