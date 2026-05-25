@@ -14,6 +14,9 @@ export default function RoomDetails() {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [reserving, setReserving] = useState(false)
+  const [reviews, setReviews] = useState([])
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' })
+  const [reviewLoading, setReviewLoading] = useState(false)
 
   useEffect(() => {
     const loadRoom = async () => {
@@ -24,6 +27,14 @@ export default function RoomDetails() {
           const hotelId = res.data.data?.hotel?._id || res.data?.hotel
           const hotelRes = await api.get(`/hotels/${hotelId}`)
           setHotel(hotelRes.data.data || hotelRes.data)
+
+          // Rəyləri yüklə
+          try {
+            const reviewRes = await api.get(`/review/${hotelId}`)
+            setReviews(reviewRes.data.data || [])
+          } catch {
+            setReviews([])
+          }
         }
       } catch (err) {
         console.error('Otaq yüklənmədi:', err)
@@ -47,6 +58,35 @@ export default function RoomDetails() {
     }
     loadRoom()
   }, [id])
+
+  const handleSubmitReview = async e => {
+    e.preventDefault()
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    if (hotel._id === 'demo-hotel') {
+      alert('Demo rejimdir. Zəhmət olmasa real otel seçin.')
+      return
+    }
+    setReviewLoading(true)
+    try {
+      await api.post('/review', {
+        hotel: hotel._id,
+        rating: Number(reviewForm.rating),
+        comment: reviewForm.comment
+      })
+      setReviewForm({ rating: 5, comment: '' })
+      // Rəyləri yenidən yüklə
+      const reviewRes = await api.get(`/review/${hotel._id}`)
+      setReviews(reviewRes.data.data || [])
+      alert('Rəyiniz göndərildi!')
+    } catch (err) {
+      alert('Rəy göndərilmədi: ' + (err.response?.data?.message || err.message))
+    } finally {
+      setReviewLoading(false)
+    }
+  }
 
   const handleReserve = async e => {
     e.preventDefault()
@@ -193,6 +233,57 @@ export default function RoomDetails() {
                 </Link>
               </div>
             )}
+
+            <div className="panel mt-6">
+              <h3 className="text-lg font-semibold mb-4">Rəylər</h3>
+              {user && hotel._id !== 'demo-hotel' && (
+                <form onSubmit={handleSubmitReview} className="mb-6 pb-6 border-b">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2">Reytinq</label>
+                    <select
+                      value={reviewForm.rating}
+                      onChange={e => setReviewForm(prev => ({ ...prev, rating: e.target.value }))}
+                      className="input"
+                    >
+                      <option value="5">5 - Əla</option>
+                      <option value="4">4 - Yaxşı</option>
+                      <option value="3">3 - Orta</option>
+                      <option value="2">2 - Zəif</option>
+                      <option value="1">1 - Çox zəif</option>
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2">Şərh</label>
+                    <textarea
+                      value={reviewForm.comment}
+                      onChange={e => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                      className="input"
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-gold w-full" disabled={reviewLoading}>
+                    {reviewLoading ? 'Göndərilir...' : 'Rəy yaz'}
+                  </button>
+                </form>
+              )}
+              <div className="space-y-4">
+                {reviews.length === 0 ? (
+                  <p className="text-gray-600">Hələ rəy yoxdur.</p>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review._id} className="p-4 rounded bg-slate-50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-semibold">{review.user?.name || 'Anonim'}</span>
+                        <span className="badge">{review.rating} ★</span>
+                      </div>
+                      <p className="text-gray-700">{review.comment}</p>
+                      <p className="text-xs text-gray-500 mt-2">{new Date(review.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
