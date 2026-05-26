@@ -6,6 +6,10 @@ import Home from './pages/Home'
 import RoomDetails from './pages/RoomDetails'
 import About from './pages/About'
 import Rooms from './pages/Rooms'
+import Services from './pages/Services'
+import Gallery from './pages/Gallery'
+import FAQ from './pages/FAQ'
+import SpecialOffers from './pages/SpecialOffers'
 import Blog from './pages/Blog'
 import Contact from './pages/Contact'
 import Login from './pages/Login'
@@ -50,6 +54,10 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/rooms" element={<Rooms />} />
           <Route path="/rooms/:id" element={<RoomDetails />} />
+          <Route path="/special-offers" element={<SpecialOffers />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />

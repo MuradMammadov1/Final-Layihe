@@ -42,7 +42,11 @@ export default function Navbar() {
         <div className={`nav-links-wrap ${menuOpen ? 'is-open' : ''}`}>
           <Link to="/" className="nav-link-pill">Ana səhifə</Link>
           <Link to="/rooms" className="nav-link-pill">Otaqlar</Link>
+          <Link to="/special-offers" className="nav-link-pill">Xüsusi Təkliflər</Link>
           <Link to="/about" className="nav-link-pill">Haqqımızda</Link>
+          <Link to="/services" className="nav-link-pill">Xidmətlər</Link>
+          <Link to="/gallery" className="nav-link-pill">Qalereya</Link>
+          <Link to="/faq" className="nav-link-pill">FAQ</Link>
           <Link to="/blog" className="nav-link-pill">Bloq</Link>
           <Link to="/contact" className="nav-link-pill">Əlaqə</Link>
           {!loading && user ? (
