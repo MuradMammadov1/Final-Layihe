@@ -1,49 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import api from '../api'
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(null)
+  const [faqs, setFaqs] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const faqs = [
-    {
-      question: 'Rezervasiya necə edilir?',
-      answer: 'Otaqlar səhifəsindən istədiyiniz otağı seçin, tarixləri göstərin və "Rezerv et" düyməsini basın. Qeydiyyatlı olmalısınız.'
-    },
-    {
-      question: 'Rezervasiyanı ləğv etmək mümkündürmü?',
-      answer: 'Bəli, Profil səhifənizdən rezervasiyalarınızı görə və ləğv edə bilərsiniz. Ləğv qaydaları otaq növündən asılıdır.'
-    },
-    {
-      question: 'Otaqlarda WiFi varmı?',
-      answer: 'Bəli, bütün otaqlarda pulsuz yüksək sürətli WiFi mövcuddur.'
-    },
-    {
-      question: 'Otelə nə vaxt daxil ola bilərəm?',
-      answer: 'Standart check-in vaxtı 14:00-dur. Əvvəl daxil olmaq üçün əvvəlcədən əlaqə saxlayın.'
-    },
-    {
-      question: 'Otelə nə vaxt çıxmalıyam?',
-      answer: 'Standart check-out vaxtı 12:00-dur. Gecikmə üçün əlavə haqq tətbiq oluna bilər.'
-    },
-    {
-      question: 'Uşaqlar üçün nə xidmətlər var?',
-      answer: 'Uşaqlar üçün xüsusi otaqlar, uşaq hovuzu və oyun meydançası mövcuddur.'
-    },
-    {
-      question: 'Evcil heyvan gətirilə bilərmi?',
-      answer: 'Bəzi otaqlarda evcil heyvanlara icazə verilir. Əvvəlcədən bildirin.'
-    },
-    {
-      question: 'Nəqliyyat xidmətləri varmı?',
-      answer: 'Bəli, hava limanına transfer, avtomobil icarəsi və parkinq xidmətləri təklif edirik.'
-    },
-    {
-      question: 'Restoran saatları nədir?',
-      answer: 'Restoran gündəlik 07:00-23:00 arası açıqdır. Səhər yeməyi 07:00-10:00, nahar 12:00-15:00, şam yeməyi 18:00-23:00.'
-    },
-    {
-      question: 'Ödəniş üsulları nələrdir?',
-      answer: 'Nağd, kredit kartı və onlayn ödəniş qəbul edilir.'
+  useEffect(() => {
+    const loadFAQs = async () => {
+      try {
+        const res = await api.get('/faq')
+        setFaqs(res.data.data || [])
+      } catch {
+        setFaqs([])
+      } finally {
+        setLoading(false)
+      }
     }
+    loadFAQs()
+  }, [])
+
+  const demoFAQs = faqs.length ? faqs : [
+    { question: 'Rezervasiya necə edilir?', answer: 'Otaqlar səhifəsindən istədiyiniz otağı seçin, tarixləri göstərin və "Rezerv et" düyməsini basın. Qeydiyyatlı olmalısınız.' },
+    { question: 'Rezervasiyanı ləğv etmək mümkündürmü?', answer: 'Bəli, Profil səhifənizdən rezervasiyalarınızı görə və ləğv edə bilərsiniz. Ləğv qaydaları otaq növündən asılıdır.' },
+    { question: 'Otaqlarda WiFi varmı?', answer: 'Bəli, bütün otaqlarda pulsuz yüksək sürətli WiFi mövcuddur.' },
+    { question: 'Otelə nə vaxt daxil ola bilərəm?', answer: 'Standart check-in vaxtı 14:00-dur. Əvvəl daxil olmaq üçün əvvəlcədən əlaqə saxlayın.' },
+    { question: 'Otelə nə vaxt çıxmalıyam?', answer: 'Standart check-out vaxtı 12:00-dur. Gecikmə üçün əlavə haqq tətbiq oluna bilər.' },
+    { question: 'Uşaqlar üçün nə xidmətlər var?', answer: 'Uşaqlar üçün xüsusi otaqlar, uşaq hovuzu və oyun meydançası mövcuddur.' },
+    { question: 'Evcil heyvan gətirilə bilərmi?', answer: 'Bəzi otaqlarda evcil heyvanlara icazə verilir. Əvvəlcədən bildirin.' },
+    { question: 'Nəqliyyat xidmətləri varmı?', answer: 'Bəli, hava limanına transfer, avtomobil icarəsi və parkinq xidmətləri təklif edirik.' },
+    { question: 'Restoran saatları nədir?', answer: 'Restoran gündəlik 07:00-23:00 arası açıqdır. Səhər yeməyi 07:00-10:00, nahar 12:00-15:00, şam yeməyi 18:00-23:00.' },
+    { question: 'Ödəniş üsulları nələrdir?', answer: 'Nağd, kredit kartı və onlayn ödəniş qəbul edilir.' }
   ]
 
   return (
@@ -61,29 +48,33 @@ export default function FAQ() {
       </section>
 
       <section className="container section-pad">
-        <div className="faq-list">
-          {faqs.map((faq, idx) => (
-            <div key={idx} className="faq-item panel">
-              <button
-                className="faq-question"
-                onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                aria-expanded={openIndex === idx}
-              >
-                <span>{faq.question}</span>
-                <span className="faq-icon">{openIndex === idx ? '−' : '+'}</span>
-              </button>
-              {openIndex === idx && (
-                <div className="faq-answer">
-                  <p>{faq.answer}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="panel text-center py-12">Yüklənir...</div>
+        ) : (
+          <div className="faq-list">
+            {demoFAQs.map((faq, idx) => (
+              <div key={faq._id || idx} className="faq-item panel">
+                <button
+                  className="faq-question"
+                  onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
+                  aria-expanded={openIndex === idx}
+                >
+                  <span className="flex-1 text-left font-semibold">{faq.question}</span>
+                  <span className="faq-icon text-2xl font-light">{openIndex === idx ? '−' : '+'}</span>
+                </button>
+                {openIndex === idx && (
+                  <div className="faq-answer">
+                    <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
-        <div className="panel text-center mt-8">
-          <h2 className="section-heading">Daha çox sualınız var?</h2>
-          <p className="text-gray-600 mt-4 mb-6">
+        <div className="panel text-center mt-8 py-8">
+          <h2 className="section-heading mb-2">Daha çox sualınız var?</h2>
+          <p className="text-gray-600 mt-4 mb-6 max-w-2xl mx-auto">
             Bizimlə əlaqə saxlayın və komandamız sizə kömək edəcək.
           </p>
           <a href="/contact" className="btn btn-gold">Bizimlə əlaqə</a>

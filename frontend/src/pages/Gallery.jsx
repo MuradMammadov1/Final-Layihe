@@ -1,32 +1,51 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api'
 
 export default function Gallery() {
   const [hotels, setHotels] = useState([])
+  const [rooms, setRooms] = useState([])
   const [selectedHotel, setSelectedHotel] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadHotels = async () => {
+    const loadData = async () => {
       try {
-        const res = await api.get('/hotels')
-        setHotels(res.data.data || [])
+        const [hotelsRes, roomsRes] = await Promise.all([
+          api.get('/hotels'),
+          api.get('/rooms')
+        ])
+        setHotels(hotelsRes.data.data || [])
+        setRooms(roomsRes.data.data || [])
       } catch {
         setHotels([])
+        setRooms([])
       } finally {
         setLoading(false)
       }
     }
-    loadHotels()
+    loadData()
   }, [])
 
-  const allImages = hotels.flatMap(hotel => 
-    (hotel.images || []).map(img => ({
-      url: img,
-      hotelName: hotel.name,
-      hotelId: hotel._id
-    }))
-  )
+  const allImages = [
+    ...hotels.flatMap(hotel => 
+      (hotel.images || []).map(img => ({
+        url: img,
+        hotelName: hotel.name,
+        hotelId: hotel._id,
+        type: 'hotel'
+      }))
+    ),
+    ...rooms.flatMap(room => 
+      (room.hotel?.images || []).map(img => ({
+        url: img,
+        hotelName: room.hotel?.name || 'Otel',
+        hotelId: room.hotel?._id,
+        roomId: room._id,
+        type: 'room'
+      }))
+    )
+  ]
 
   return (
     <div className="page-gallery">
@@ -50,10 +69,10 @@ export default function Gallery() {
         ) : (
           <div className="gallery-grid">
             {allImages.map((img, idx) => (
-              <div 
+              <Link 
                 key={`${img.hotelId}-${idx}`} 
                 className="gallery-item"
-                onClick={() => setSelectedHotel(img)}
+                to={img.type === 'room' ? `/rooms/${img.roomId}` : `/rooms`}
               >
                 <img 
                   src={img.url} 
@@ -62,31 +81,13 @@ export default function Gallery() {
                 />
                 <div className="gallery-overlay">
                   <p className="gallery-caption">{img.hotelName}</p>
+                  <p className="gallery-caption text-xs">{img.type === 'room' ? 'Otaq' : 'Otel'}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
       </section>
-
-      {selectedHotel && (
-        <div className="modal" onClick={() => setSelectedHotel(null)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <button 
-              className="modal-close" 
-              onClick={() => setSelectedHotel(null)}
-            >
-              ×
-            </button>
-            <img 
-              src={selectedHotel.url} 
-              alt={selectedHotel.hotelName}
-              className="modal-image"
-            />
-            <p className="modal-caption">{selectedHotel.hotelName}</p>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

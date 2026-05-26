@@ -11,6 +11,11 @@ const reservationRoutes = require('./routes/reservationRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const roomRoutes = require('./routes/roomRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+const faqRoutes = require('./routes/faqRoutes');
+const specialOfferRoutes = require('./routes/specialOfferRoutes');
+const blogRoutes = require('./routes/blogRoutes');
+const aboutRoutes = require('./routes/aboutRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
@@ -102,6 +107,11 @@ app.use('/api/reservation', reservationRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/rooms', roomRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/faq', faqRoutes);
+app.use('/api/special-offers', specialOfferRoutes);
+app.use('/api/blog', blogRoutes);
+app.use('/api/about', aboutRoutes);
 app.use('/api/contact', require('./routes/contactRoutes'));
 
 // API docs (Swagger)

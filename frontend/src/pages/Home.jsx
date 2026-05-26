@@ -2,31 +2,38 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import HeroSlider from '../components/HeroSlider'
 import BookingBar from '../components/BookingBar'
-import HotelCard from '../components/HotelCard'
+import RoomCard from '../components/RoomCard'
 import Newsletter from '../components/Newsletter'
 import api from '../api'
 import { ABOUT_IMAGE, DINING_IMAGE, POOL_IMAGE, ROOM_IMAGES } from '../data/images'
 import { HOME_NEWS, HOME_SERVICES, HOME_STATS } from '../data/siteContent'
 
 export default function Home() {
-  const [hotels, setHotels] = useState([])
+  const [rooms, setRooms] = useState([])
 
   useEffect(() => {
-    api.get('/hotels', { params: { limit: 6 } })
-      .then(res => setHotels((res.data.data || []).slice(0, 6)))
-      .catch(() => setHotels([]))
+    api.get('/rooms')
+      .then(res => setRooms((res.data.data || []).slice(0, 6)))
+      .catch(() => setRooms([]))
   }, [])
 
-  const demoRooms = hotels.length
-    ? hotels
+  const demoRooms = rooms.length
+    ? rooms
     : ROOM_IMAGES.map((img, i) => ({
         _id: `demo-${i}`,
-        name: ['Klassik İkiqat', 'Deluxe Suite', 'Executive Otaq', 'Ailə Otağı', 'Premium King', 'Studio Otaq'][i],
-        city: 'Bakı',
+        title: ['Klassik İkiqat', 'Deluxe Suite', 'Executive Otaq', 'Ailə Otağı', 'Premium King', 'Studio Otaq'][i],
+        type: ['Standard', 'Suite', 'Deluxe', 'Family', 'Premium', 'Studio'][i],
         price: [120, 150, 180, 200, 220, 160][i],
+        capacity: [2, 2, 2, 4, 2, 2][i],
         rating: 4.5 + (i % 3) * 0.1,
         images: [img],
         description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.',
+        hotel: {
+          _id: 'demo-hotel',
+          name: 'Aura Grand Hotel',
+          city: 'Bakı',
+          images: [img]
+        }
       }))
 
   return (
@@ -78,8 +85,8 @@ export default function Home() {
           </p>
         </div>
         <div className="grid gap-4 hotel-grid">
-          {demoRooms.map(h => (
-            <HotelCard key={h._id} hotel={h} demo={String(h._id).startsWith('demo-')} />
+          {demoRooms.map(r => (
+            <RoomCard key={r._id} room={r} />
           ))}
         </div>
         <div className="text-center mt-8">

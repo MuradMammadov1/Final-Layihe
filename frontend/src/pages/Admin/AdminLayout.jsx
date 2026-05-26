@@ -43,6 +43,21 @@ export default function AdminLayout(){
         <NavLink to="/admin/reviews" className={({ isActive }) => tabClass(isActive)}>
           Rəylər
         </NavLink>
+        <NavLink to="/admin/services" className={({ isActive }) => tabClass(isActive)}>
+          Xidmətlər
+        </NavLink>
+        <NavLink to="/admin/faq" className={({ isActive }) => tabClass(isActive)}>
+          FAQ
+        </NavLink>
+        <NavLink to="/admin/special-offers" className={({ isActive }) => tabClass(isActive)}>
+          Təkliflər
+        </NavLink>
+        <NavLink to="/admin/blog" className={({ isActive }) => tabClass(isActive)}>
+          Bloq
+        </NavLink>
+        <NavLink to="/admin/about" className={({ isActive }) => tabClass(isActive)}>
+          Haqqımızda
+        </NavLink>
       </nav>
       <Outlet />
     </div>

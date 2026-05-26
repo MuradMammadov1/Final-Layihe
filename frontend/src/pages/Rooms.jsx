@@ -10,6 +10,7 @@ export default function Rooms() {
   const [filter, setFilter] = useState({ city: '', minPrice: '', maxPrice: '', type: '' })
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [showAll, setShowAll] = useState(false)
   const itemsPerPage = 6
 
   useEffect(() => {
@@ -43,7 +44,8 @@ export default function Rooms() {
     return cityMatch && minPriceMatch && maxPriceMatch && typeMatch
   })
 
-  const paginatedRooms = filteredRooms.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  const displayRooms = showAll ? filteredRooms : filteredRooms.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  const paginatedRooms = displayRooms
   const demoRooms = paginatedRooms.length ? paginatedRooms : ROOM_IMAGES.map((img, i) => ({
     _id: `demo-${i}`,
     title: ['Klassik İkiqat', 'Deluxe Suite', 'Executive Otaq', 'Ailə Otağı', 'Premium King', 'Studio Otaq'][i],
@@ -122,6 +124,9 @@ export default function Rooms() {
             <button className="btn btn-sm" onClick={() => setFilter({ city: '', minPrice: '', maxPrice: '', type: '' })}>
               Təmizlə
             </button>
+            <button className="btn btn-sm btn-gold" onClick={() => { setShowAll(!showAll); setPage(1) }}>
+              {showAll ? 'Səhifələ' : 'Hamısına bax'}
+            </button>
             <span className="text-sm text-gray-600 self-center">
               {filteredRooms.length} nəticə
             </span>
@@ -162,7 +167,7 @@ export default function Rooms() {
               ))}
             </div>
 
-            {totalPages > 1 && (
+            {!showAll && totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-8">
                 <button
                   className="btn btn-sm secondary"

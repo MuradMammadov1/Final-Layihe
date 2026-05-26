@@ -22,6 +22,11 @@ import RoomManager from './pages/Admin/RoomManager'
 import ReservationManager from './pages/Admin/ReservationManager'
 import UserManager from './pages/Admin/UserManager'
 import ReviewManager from './pages/Admin/ReviewManager'
+import ServiceManager from './pages/Admin/ServiceManager'
+import FAQManager from './pages/Admin/FAQManager'
+import SpecialOfferManager from './pages/Admin/SpecialOfferManager'
+import BlogManager from './pages/Admin/BlogManager'
+import AboutManager from './pages/Admin/AboutManager'
 import AdminGuard from './components/AdminGuard'
 
 function MainShell({ children }) {
@@ -70,6 +75,11 @@ export default function App() {
             <Route path="reservations" element={<ReservationManager />} />
             <Route path="users" element={<UserManager />} />
             <Route path="reviews" element={<ReviewManager />} />
+            <Route path="services" element={<ServiceManager />} />
+            <Route path="faq" element={<FAQManager />} />
+            <Route path="special-offers" element={<SpecialOfferManager />} />
+            <Route path="blog" element={<BlogManager />} />
+            <Route path="about" element={<AboutManager />} />
           </Route>
         </Routes>
       </MainShell>
