@@ -58,6 +58,9 @@ export default function AdminLayout(){
         <NavLink to="/admin/about" className={({ isActive }) => tabClass(isActive)}>
           Haqqımızda
         </NavLink>
+        <NavLink to="/admin/testimonials" className={({ isActive }) => tabClass(isActive)}>
+          Testimonials
+        </NavLink>
       </nav>
       <Outlet />
     </div>

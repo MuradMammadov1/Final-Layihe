@@ -27,6 +27,7 @@ import FAQManager from './pages/Admin/FAQManager'
 import SpecialOfferManager from './pages/Admin/SpecialOfferManager'
 import BlogManager from './pages/Admin/BlogManager'
 import AboutManager from './pages/Admin/AboutManager'
+import TestimonialManager from './pages/Admin/TestimonialManager'
 import AdminGuard from './components/AdminGuard'
 
 function MainShell({ children }) {
@@ -80,6 +81,7 @@ export default function App() {
             <Route path="special-offers" element={<SpecialOfferManager />} />
             <Route path="blog" element={<BlogManager />} />
             <Route path="about" element={<AboutManager />} />
+            <Route path="testimonials" element={<TestimonialManager />} />
           </Route>
         </Routes>
       </MainShell>

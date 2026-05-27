@@ -10,11 +10,23 @@ import { HOME_NEWS, HOME_SERVICES, HOME_STATS } from '../data/siteContent'
 
 export default function Home() {
   const [rooms, setRooms] = useState([])
+  const [testimonials, setTestimonials] = useState([])
 
   useEffect(() => {
-    api.get('/rooms')
-      .then(res => setRooms((res.data.data || []).slice(0, 6)))
-      .catch(() => setRooms([]))
+    const loadData = async () => {
+      try {
+        const [roomsRes, testimonialsRes] = await Promise.all([
+          api.get('/rooms'),
+          api.get('/testimonials')
+        ])
+        setRooms((roomsRes.data.data || []).slice(0, 6))
+        setTestimonials(testimonialsRes.data.data || [])
+      } catch {
+        setRooms([])
+        setTestimonials([])
+      }
+    }
+    loadData()
   }, [])
 
   const demoRooms = rooms.length
@@ -135,12 +147,23 @@ export default function Home() {
     </section>
 
     <section className="section-pad container">
-      <div className="testimonial-card">
-        <p className="testimonial-quote">
-          «Aura Grand-da qaldığım hər dəfə təmiz otaq, mehriban personal və problemsiz bron təcrübəsi ilə qarşılaşdım. Tövsiyə edirəm.»
-        </p>
-        <p className="testimonial-author">— Leyla Həsənova, daimi qonaq</p>
-      </div>
+      {testimonials.length > 0 ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          {testimonials.slice(0, 2).map(t => (
+            <div key={t._id} className="testimonial-card">
+              <p className="testimonial-quote">«{t.content}»</p>
+              <p className="testimonial-author">— {t.name}, {t.position} ⭐ {t.rating}/5</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="testimonial-card">
+          <p className="testimonial-quote">
+            «Aura Grand-da qaldığım hər dəfə təmiz otaq, mehriban personal və problemsiz bron təcrübəsi ilə qarşılaşdım. Tövsiyə edirəm.»
+          </p>
+          <p className="testimonial-author">— Leyla Həsənova, daimi qonaq</p>
+        </div>
+      )}
     </section>
 
     <section className="section-pad section-muted">
