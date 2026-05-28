@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const emailService = require('../utils/emailService');
 
 // Token yaratmaq üçün köməkçi funksiya
 const generateToken = (id) => {
@@ -30,6 +31,9 @@ exports.register = async (req, res, next) => {
         });
 
         if (user) {
+            // Welcome email göndər
+            await emailService.sendWelcomeEmail(user.email, user.name);
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,

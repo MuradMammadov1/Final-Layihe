@@ -1,7 +1,9 @@
 const Reservation = require('../models/Reservation');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
+const User = require('../models/User');
 const sendEmail = require('../utils/sendEmail');
+const emailService = require('../utils/emailService');
 
 const buildDateOverlap = (startDate, endDate) => ({
     $or: [
@@ -85,6 +87,19 @@ exports.makeReservation = async (req, res, next) => {
             user: req.user._id || req.user.id
         });
 
+        // Email notification göndər
+        const user = await User.findById(req.user._id || req.user.id);
+        if (user && user.email) {
+            await emailService.sendReservationConfirmation(user.email, {
+                hotelName: hotelDoc.name,
+                roomTitle: reservedRoom ? reservedRoom.title : 'Otaq seçilməyib',
+                startDate: start.toLocaleDateString('az-AZ'),
+                endDate: end.toLocaleDateString('az-AZ'),
+                price: totalPrice,
+                status: 'pending'
+            });
+        }
+
         const message = `Salam, ${req.user.name}. Rezervasiyanız təsdiq edildi. Rezervasiya ID: ${reservation._id}`;
         await sendEmail({
             email: req.user.email,
@@ -162,11 +177,23 @@ exports.updateReservationStatus = async (req, res, next) => {
             { new: true, runValidators: true }
         )
             .populate('user', 'name email')
-            .populate('hotel', 'name');
+            .populate('hotel', 'name')
+            .populate('room', 'title');
 
         if (!reservation) {
             res.status(404);
             return next(new Error('Rezervasiya tapılmadı'));
+        }
+
+        // Email notification göndər
+        if (reservation.user && reservation.user.email) {
+            await emailService.sendReservationStatusUpdate(reservation.user.email, {
+                hotelName: reservation.hotel.name,
+                roomTitle: reservation.room ? reservation.room.title : 'Otaq seçilməyib',
+                startDate: reservation.startDate.toLocaleDateString('az-AZ'),
+                endDate: reservation.endDate.toLocaleDateString('az-AZ'),
+                status: status
+            });
         }
 
         res.status(200).json({ success: true, data: reservation });

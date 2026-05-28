@@ -61,6 +61,9 @@ export default function AdminLayout(){
         <NavLink to="/admin/testimonials" className={({ isActive }) => tabClass(isActive)}>
           Testimonials
         </NavLink>
+        <NavLink to="/admin/gallery" className={({ isActive }) => tabClass(isActive)}>
+          Qalereya
+        </NavLink>
       </nav>
       <Outlet />
     </div>
