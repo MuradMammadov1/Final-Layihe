@@ -47,10 +47,15 @@ export default function HotelManager(){
 
   const handleSubmit = async e => {
     e.preventDefault()
+    const priceValue = Number(form.price)
+    if (priceValue < 0) {
+      setMessage('Qiymət mənfi ola bilməz')
+      return
+    }
     try {
       const payload = {
         ...form,
-        price: Number(form.price),
+        price: priceValue,
         images: form.images.split(',').map(url => url.trim()).filter(Boolean)
       }
       if (editingId) {

@@ -38,11 +38,16 @@ export default function RoomManager(){
 
   const handleSubmit = async e => {
     e.preventDefault()
+    const priceValue = Number(form.price)
+    if (priceValue < 0) {
+      setMessage('Qiymət mənfi ola bilməz')
+      return
+    }
     try {
       const payload = {
         hotel: form.hotel,
         title: form.title,
-        price: Number(form.price),
+        price: priceValue,
         capacity: Number(form.capacity),
         count: Number(form.count),
         type: form.type,
