@@ -33,6 +33,10 @@ export default function Footer() {
           <Link to="/blog">Bloq</Link>
           <Link to="/contact">Əlaqə</Link>
         </FooterCol>
+        <FooterCol title="Hüquqi">
+          <Link to="/privacy">Məxfilik Siyasəti</Link>
+          <Link to="/terms">İstifadə Şərtləri</Link>
+        </FooterCol>
         <FooterCol title="Əlaqə">
           <p>Bakı, Azərbaycan</p>
           <p>Nizami küç. 45</p>
