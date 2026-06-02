@@ -46,22 +46,6 @@ export default function Rooms() {
 
   const displayRooms = showAll ? filteredRooms : filteredRooms.slice((page - 1) * itemsPerPage, page * itemsPerPage)
   const paginatedRooms = displayRooms
-  const demoRooms = paginatedRooms.length ? paginatedRooms : ROOM_IMAGES.map((img, i) => ({
-    _id: `demo-${i}`,
-    title: ['Klassik İkiqat', 'Deluxe Suite', 'Executive Otaq', 'Ailə Otağı', 'Premium King', 'Studio Otaq'][i],
-    type: ['Standard', 'Suite', 'Deluxe', 'Family', 'Premium', 'Studio'][i],
-    price: [120, 150, 180, 200, 220, 160][i],
-    capacity: [2, 2, 2, 4, 2, 2][i],
-    description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.',
-    amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'],
-    hotel: {
-      _id: 'demo-hotel',
-      name: 'Aura Grand Hotel',
-      city: 'Bakı',
-      description: 'Lüks və rahat qonaqlıq təcrübəsi.',
-      images: [img]
-    }
-  }))
 
   return (
     <div className="page-rooms">
@@ -135,14 +119,16 @@ export default function Rooms() {
 
         {loading ? (
           <div className="panel text-center">Yüklənir...</div>
+        ) : paginatedRooms.length === 0 ? (
+          <div className="panel text-center">Otaq tapılmadı.</div>
         ) : (
           <>
             <div className="rooms-grid">
-              {demoRooms.map((room, idx) => (
+              {paginatedRooms.map((room, idx) => (
                 <Link key={room._id} to={`/rooms/${room._id}`} className="room-card panel">
                   <div className="room-card-image">
                     <img
-                      src={rooms.length ? (room.hotel?.images?.[0] || ROOM_IMAGES[0]) : ROOM_IMAGES[idx % ROOM_IMAGES.length]}
+                      src={room.hotel?.images?.[0] || ROOM_IMAGES[0]}
                       alt={room.title}
                     />
                   </div>

@@ -29,25 +29,6 @@ export default function Home() {
     loadData()
   }, [])
 
-  const demoRooms = rooms.length
-    ? rooms
-    : ROOM_IMAGES.map((img, i) => ({
-        _id: `demo-${i}`,
-        title: ['Klassik İkiqat', 'Deluxe Suite', 'Executive Otaq', 'Ailə Otağı', 'Premium King', 'Studio Otaq'][i],
-        type: ['Standard', 'Suite', 'Deluxe', 'Family', 'Premium', 'Studio'][i],
-        price: [120, 150, 180, 200, 220, 160][i],
-        capacity: [2, 2, 2, 4, 2, 2][i],
-        rating: 4.5 + (i % 3) * 0.1,
-        images: [img],
-        description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.',
-        hotel: {
-          _id: 'demo-hotel',
-          name: 'Aura Grand Hotel',
-          city: 'Bakı',
-          images: [img]
-        }
-      }))
-
   return (
   <>
     <div className="home-hero-wrap">
@@ -97,9 +78,13 @@ export default function Home() {
           </p>
         </div>
         <div className="grid gap-4 hotel-grid">
-          {demoRooms.map(r => (
-            <RoomCard key={r._id} room={r} />
-          ))}
+          {rooms.length > 0 ? (
+            rooms.map(r => (
+              <RoomCard key={r._id} room={r} />
+            ))
+          ) : (
+            <p className="text-gray-600 text-center col-span-full">Otaq yoxdur.</p>
+          )}
         </div>
         <div className="text-center mt-8">
           <Link to="/rooms" className="btn btn-gold">Hamısına bax</Link>
