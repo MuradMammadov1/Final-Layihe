@@ -38,20 +38,7 @@ export default function RoomDetails() {
         }
       } catch (err) {
         console.error('Otaq yüklənmədi:', err)
-        // Demo otaq məlumatları
-        const demoRooms = [
-          { _id: 'demo-0', title: 'Klassik İkiqat', type: 'Standard', price: 120, capacity: 2, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] },
-          { _id: 'demo-1', title: 'Deluxe Suite', type: 'Suite', price: 150, capacity: 2, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] },
-          { _id: 'demo-2', title: 'Executive Otaq', type: 'Deluxe', price: 180, capacity: 2, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] },
-          { _id: 'demo-3', title: 'Ailə Otağı', type: 'Family', price: 200, capacity: 4, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] },
-          { _id: 'demo-4', title: 'Premium King', type: 'Premium', price: 220, capacity: 2, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] },
-          { _id: 'demo-5', title: 'Studio Otaq', type: 'Studio', price: 160, capacity: 2, description: 'Geniş və işıqlı otaq, peşəkar xidmət və rahat yataq.', amenities: ['WiFi', 'TV', 'Kondisioner', 'Mini bar'] }
-        ]
-        const demoRoom = demoRooms.find(r => r._id === id)
-        if (demoRoom) {
-          setRoom(demoRoom)
-          setHotel({ _id: 'demo-hotel', name: 'Aura Grand Hotel', city: 'Bakı', description: 'Lüks və rahat qonaqlıq təcrübəsi.' })
-        }
+        setRoom(null)
       } finally {
         setLoading(false)
       }
@@ -63,10 +50,6 @@ export default function RoomDetails() {
     e.preventDefault()
     if (!user) {
       navigate('/login')
-      return
-    }
-    if (hotel._id === 'demo-hotel') {
-      alert('Demo rejimdir. Zəhmət olmasa real otel seçin.')
       return
     }
     setReviewLoading(true)
@@ -100,12 +83,6 @@ export default function RoomDetails() {
     }
     setReserving(true)
     try {
-      // Demo hotel üçün rezervasiya etmirik
-      if (hotel._id === 'demo-hotel') {
-        alert('Demo rejimdir. Zəhmət olmasa real otel seçin.')
-        navigate('/hotels')
-        return
-      }
       await api.post('/reservation', {
         hotel: hotel._id,
         room: room._id,
@@ -113,7 +90,7 @@ export default function RoomDetails() {
         endDate
       })
       alert('Rezervasiya uğurla tamamlandı!')
-      navigate('/hotels')
+      navigate('/profile')
     } catch (err) {
       alert('Rezervasiya alınmadı: ' + (err.response?.data?.message || err.message))
     } finally {
@@ -224,7 +201,7 @@ export default function RoomDetails() {
               )}
             </div>
 
-            {hotel && hotel._id !== 'demo-hotel' && (
+            {hotel && (
               <div className="panel mt-6">
                 <h3 className="text-lg font-semibold mb-3">Otel haqqında</h3>
                 <p className="text-gray-600 mb-4">{hotel.description}</p>
@@ -236,7 +213,7 @@ export default function RoomDetails() {
 
             <div className="panel mt-6">
               <h3 className="text-lg font-semibold mb-4">Rəylər</h3>
-              {user && hotel._id !== 'demo-hotel' && (
+              {user && (
                 <form onSubmit={handleSubmitReview} className="mb-6 pb-6 border-b">
                   <div className="mb-4">
                     <label className="block text-sm font-medium mb-2">Reytinq</label>
