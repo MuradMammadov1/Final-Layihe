@@ -17,6 +17,7 @@ import Terms from './pages/Terms'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
+import Wishlist from './pages/Wishlist'
 import AdminLayout from './pages/Admin/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard'
 import HotelManager from './pages/Admin/HotelManager'
@@ -32,6 +33,7 @@ import AboutManager from './pages/Admin/AboutManager'
 import TestimonialManager from './pages/Admin/TestimonialManager'
 import GalleryManager from './pages/Admin/GalleryManager'
 import AdminGuard from './components/AdminGuard'
+import { ThemeProvider } from './context/ThemeContext'
 
 function MainShell({ children }) {
   const { pathname } = useLocation()
@@ -55,43 +57,46 @@ function MainShell({ children }) {
 
 export default function App() {
   return (
-    <div className="min-h-screen app-shell">
-      <SiteHeader />
-      <MainShell>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/rooms" element={<Rooms />} />
-          <Route path="/rooms/:id" element={<RoomDetails />} />
-          <Route path="/special-offers" element={<SpecialOffers />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
-            <Route index element={<Dashboard />} />
-            <Route path="hotels" element={<HotelManager />} />
-            <Route path="rooms" element={<RoomManager />} />
-            <Route path="reservations" element={<ReservationManager />} />
-            <Route path="users" element={<UserManager />} />
-            <Route path="reviews" element={<ReviewManager />} />
-            <Route path="services" element={<ServiceManager />} />
-            <Route path="faq" element={<FAQManager />} />
-            <Route path="special-offers" element={<SpecialOfferManager />} />
-            <Route path="blog" element={<BlogManager />} />
-            <Route path="about" element={<AboutManager />} />
-            <Route path="testimonials" element={<TestimonialManager />} />
-            <Route path="gallery" element={<GalleryManager />} />
-          </Route>
-        </Routes>
-      </MainShell>
-      <Footer />
-    </div>
+    <ThemeProvider>
+      <div className="min-h-screen app-shell">
+        <SiteHeader />
+        <MainShell>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/rooms" element={<Rooms />} />
+            <Route path="/rooms/:id" element={<RoomDetails />} />
+            <Route path="/special-offers" element={<SpecialOffers />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
+              <Route index element={<Dashboard />} />
+              <Route path="hotels" element={<HotelManager />} />
+              <Route path="rooms" element={<RoomManager />} />
+              <Route path="reservations" element={<ReservationManager />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="reviews" element={<ReviewManager />} />
+              <Route path="services" element={<ServiceManager />} />
+              <Route path="faq" element={<FAQManager />} />
+              <Route path="special-offers" element={<SpecialOfferManager />} />
+              <Route path="blog" element={<BlogManager />} />
+              <Route path="about" element={<AboutManager />} />
+              <Route path="testimonials" element={<TestimonialManager />} />
+              <Route path="gallery" element={<GalleryManager />} />
+            </Route>
+          </Routes>
+        </MainShell>
+        <Footer />
+      </div>
+    </ThemeProvider>
   )
 }

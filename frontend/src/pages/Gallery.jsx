@@ -9,6 +9,8 @@ export default function Gallery() {
 
   useEffect(() => {
     loadGallery()
+    const interval = setInterval(loadGallery, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const loadGallery = async () => {
@@ -22,9 +24,20 @@ export default function Gallery() {
     }
   }
 
-  const filteredItems = selectedCategory === 'all' 
-    ? galleryItems 
-    : galleryItems.filter(item => item.category === selectedCategory)
+  const demoGalleryItems = galleryItems.length ? galleryItems : [
+    { _id: '1', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800', title: 'Lüks Otaq', category: 'rooms', description: 'Müasir və zərif otaq dizaynı' },
+    { _id: '2', image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800', title: 'Restoran', category: 'dining', description: 'Azərbaycan və beynəlxalq mətbəx' },
+    { _id: '3', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800', title: 'Hovuz', category: 'pool', description: 'Açıq və qapalı hovuz kompleksi' },
+    { _id: '4', image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800', title: 'SPA Mərkəzi', category: 'spa', description: 'Relaksasiya və sağlamlıq mərkəzi' },
+    { _id: '5', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800', title: 'Konfrans Zalı', category: 'events', description: 'İclas və tədbirlər üçün zal' },
+    { _id: '6', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800', title: 'Prezident Suit', category: 'rooms', description: 'Lüks prezident suit otağı' },
+    { _id: '7', image: 'https://images.unsplash.com/photo-15593393524-11d035aa65de?w=800', title: 'Lobi Bar', category: 'dining', description: 'Zərif lobi barı və istirahət zonası' },
+    { _id: '8', image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800', title: 'Fitness Zalı', category: 'spa', description: 'Müasir fitness avadanlıqları' }
+  ]
+
+  const filteredItems = selectedCategory === 'all'
+    ? demoGalleryItems
+    : demoGalleryItems.filter(item => item.category === selectedCategory)
 
   return (
     <div className="page-gallery">

@@ -1357,6 +1357,58 @@ button, input, select, textarea { font: inherit; }
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.faq-item {
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.faq-question:hover {
+  background: var(--surface-soft);
+}
+
+.faq-icon {
+  font-size: 1.5rem;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.faq-answer {
+  padding: 0 1.25rem 1.25rem;
+  background: var(--surface-soft);
+  border-top: 1px solid var(--border);
+}
+
+.dark .faq-question {
+  background: #111827;
+  color: #e2e8f0;
+}
+
+.dark .faq-question:hover {
+  background: #1f2937;
+}
+
+.dark .faq-answer {
+  background: #1f2937;
+  border-top-color: rgba(148, 163, 184, 0.12);
+}
+
 .room-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);

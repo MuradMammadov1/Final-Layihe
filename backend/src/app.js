@@ -19,6 +19,7 @@ const aboutRoutes = require('./routes/aboutRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
+const statsRoutes = require('./routes/statsRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
@@ -118,6 +119,7 @@ app.use('/api/about', aboutRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/stats', statsRoutes);
 app.use('/api/contact', require('./routes/contactRoutes'));
 
 // API docs (Swagger)

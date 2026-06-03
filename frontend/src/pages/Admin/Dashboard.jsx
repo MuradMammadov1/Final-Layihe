@@ -8,7 +8,7 @@ export default function Dashboard(){
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const res = await api.get('/hotels/stats')
+        const res = await api.get('/stats/dashboard')
         setStats(res.data.data)
       } catch (err) {
         setError('Məlumat yüklənmədi. Admin kimi daxil olduğunuzu və backend-in işlədiyini yoxlayın.')
@@ -21,9 +21,9 @@ export default function Dashboard(){
     <div className="space-y-6">
       <div className="panel">
         <div>
-          <h2 className="section-heading text-2xl">İdarə yığcamı</h2>
+          <h2 className="section-heading text-2xl">İdarə Paneli</h2>
           <p className="mt-2 text-gray-600">
-            Otel sayısı və bron statistikaları — API: <code className="text-sm">GET /api/hotels/stats</code>
+            Sistem statistikası və məlumatları
           </p>
         </div>
       </div>
@@ -35,34 +35,55 @@ export default function Dashboard(){
       ) : null}
 
       {stats ? (
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="feature-card">
-            <p className="text-sm text-gray-500">Ümumi otel</p>
-            <p className="text-3xl font-semibold mt-2">{stats.totalHotels}</p>
+        <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Ümumi otel</p>
+              <p className="text-3xl font-semibold mt-2">{stats.totalHotels}</p>
+            </div>
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Ümumi otaq</p>
+              <p className="text-3xl font-semibold mt-2">{stats.totalRooms}</p>
+            </div>
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Ümumi istifadəçi</p>
+              <p className="text-3xl font-semibold mt-2">{stats.totalUsers}</p>
+            </div>
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Ümumi gəlir</p>
+              <p className="text-3xl font-semibold mt-2">{stats.totalRevenue} ₼</p>
+            </div>
           </div>
-          <div className="feature-card">
-            <p className="text-sm text-gray-500">Ümumi bron</p>
-            <p className="text-3xl font-semibold mt-2">{stats.totalReservations}</p>
-          </div>
-          <div className="feature-card">
-            <p className="text-sm text-gray-500">Təsdiqlənmiş bron</p>
-            <p className="text-3xl font-semibold mt-2">{stats.confirmedReservations}</p>
-          </div>
-        </div>
-      ) : null}
 
-      {stats?.popularHotels?.length > 0 ? (
-        <div className="panel">
-          <h3 className="section-heading text-lg mb-3">Populyar otellər (reytinqə görə)</h3>
-          <div className="space-y-3">
-            {stats.popularHotels.map(hotel => (
-              <div key={hotel._id} className="flex items-center justify-between gap-4">
-                <span className="font-medium">{hotel.name}</span>
-                <span className="text-sm text-gray-500">{hotel.city || '—'}</span>
-              </div>
-            ))}
+          <div className="grid gap-4 md:grid-cols-3">
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Ümumi rezervasiya</p>
+              <p className="text-3xl font-semibold mt-2">{stats.totalReservations}</p>
+            </div>
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Gözləmədə</p>
+              <p className="text-3xl font-semibold mt-2">{stats.pendingReservations}</p>
+            </div>
+            <div className="feature-card">
+              <p className="text-sm text-gray-500">Təsdiqlənmiş</p>
+              <p className="text-3xl font-semibold mt-2">{stats.confirmedReservations}</p>
+            </div>
           </div>
-        </div>
+
+          {stats?.popularHotels?.length > 0 ? (
+            <div className="panel">
+              <h3 className="section-heading text-lg mb-3">Populyar otellər</h3>
+              <div className="space-y-3">
+                {stats.popularHotels.map(item => (
+                  <div key={item.hotel._id} className="flex items-center justify-between gap-4">
+                    <span className="font-medium">{item.hotel.name}</span>
+                    <span className="text-sm text-gray-500">{item.count} rezervasiya</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </>
       ) : null}
     </div>
   )

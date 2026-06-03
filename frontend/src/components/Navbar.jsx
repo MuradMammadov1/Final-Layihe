@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 
 export default function Navbar() {
-  const [dark, setDark] = useState(() => localStorage.getItem('dark') === '1')
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark)
-    localStorage.setItem('dark', dark ? '1' : '0')
-  }, [dark])
+  const { darkMode, toggleDarkMode } = useTheme()
 
   useEffect(() => {
     setMenuOpen(false)
@@ -52,7 +48,6 @@ export default function Navbar() {
           {!loading && user ? (
             <>
               <Link to="/profile" className="nav-link-pill">{user.name}</Link>
-              {user.role === 'admin' && <Link to="/admin" className="nav-link-pill">Admin Panel</Link>}
               <button onClick={doLogout} className="btn btn-outline-gold btn-sm">Çıxış</button>
             </>
           ) : (
@@ -61,8 +56,8 @@ export default function Navbar() {
               <Link to="/register" className="btn btn-gold btn-sm">Qeydiyyat</Link>
             </>
           )}
-          <button onClick={() => setDark(d => !d)} className="btn secondary btn-sm">
-            {dark ? 'İşıqlı' : 'Qaranlıq'}
+          <button onClick={toggleDarkMode} className="btn secondary btn-sm">
+            {darkMode ? '☀️ Işıqlı' : '🌙 Qaranlıq'}
           </button>
         </div>
       </div>
