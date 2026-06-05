@@ -34,6 +34,8 @@ export default function Rooms() {
       }
     }
     loadRooms()
+    const interval = setInterval(loadRooms, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const filteredRooms = rooms.filter(room => {

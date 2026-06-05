@@ -6,6 +6,7 @@ export default function Gallery() {
   const [galleryItems, setGalleryItems] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [selectedImage, setSelectedImage] = useState(null)
 
   useEffect(() => {
     loadGallery()
@@ -100,7 +101,7 @@ export default function Gallery() {
         ) : (
           <div className="gallery-grid">
             {filteredItems.map(item => (
-              <div key={item._id} className="gallery-item">
+              <div key={item._id} className="gallery-item" onClick={() => setSelectedImage(item)}>
                 <img src={item.image} alt={item.title} className="gallery-image" />
                 <div className="gallery-overlay">
                   <p className="gallery-caption">{item.title}</p>
@@ -108,6 +109,20 @@ export default function Gallery() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {selectedImage && (
+          <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <button className="modal-close" onClick={() => setSelectedImage(null)}>×</button>
+              <img src={selectedImage.image} alt={selectedImage.title} className="modal-image" />
+              <div className="modal-info">
+                <h3 className="modal-title">{selectedImage.title}</h3>
+                {selectedImage.description && <p className="modal-description">{selectedImage.description}</p>}
+                {selectedImage.category && <span className="modal-category">{selectedImage.category}</span>}
+              </div>
+            </div>
           </div>
         )}
       </section>

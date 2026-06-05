@@ -27,6 +27,8 @@ export default function Home() {
       }
     }
     loadData()
+    const interval = setInterval(loadData, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   return (

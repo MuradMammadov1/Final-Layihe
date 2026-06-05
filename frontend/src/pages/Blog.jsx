@@ -19,6 +19,8 @@ export default function Blog() {
       }
     }
     loadBlogs()
+    const interval = setInterval(loadBlogs, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const demoBlogs = blogs.length ? blogs : HOME_NEWS.map((item, idx) => ({
