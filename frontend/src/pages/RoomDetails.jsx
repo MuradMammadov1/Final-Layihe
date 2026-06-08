@@ -17,6 +17,8 @@ export default function RoomDetails() {
   const [reviews, setReviews] = useState([])
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' })
   const [reviewLoading, setReviewLoading] = useState(false)
+  const [totalPrice, setTotalPrice] = useState(0)
+  const [nights, setNights] = useState(0)
 
   useEffect(() => {
     const loadRoom = async () => {
@@ -45,6 +47,26 @@ export default function RoomDetails() {
     }
     loadRoom()
   }, [id])
+
+  // Qiymət hesablaması
+  useEffect(() => {
+    if (startDate && endDate && room) {
+      const start = new Date(startDate)
+      const end = new Date(endDate)
+      const diffTime = Math.abs(end - start)
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      if (diffDays > 0) {
+        setNights(diffDays)
+        setTotalPrice(diffDays * room.price)
+      } else {
+        setNights(0)
+        setTotalPrice(0)
+      }
+    } else {
+      setNights(0)
+      setTotalPrice(0)
+    }
+  }, [startDate, endDate, room])
 
   const handleSubmitReview = async e => {
     e.preventDefault()
@@ -180,18 +202,31 @@ export default function RoomDetails() {
                   />
                 </div>
                 {startDate && endDate && (
-                  <div className="mb-4 p-4 bg-indigo-50 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      {startDate} - {endDate}
-                    </p>
+                  <div className="mb-4 p-4 bg-indigo-50 rounded-lg space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Tarixlər:</span>
+                      <span className="text-sm font-semibold">{startDate} - {endDate}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Gecə sayı:</span>
+                      <span className="text-sm font-semibold">{nights} gecə</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-600">Otaq qiyməti:</span>
+                      <span className="text-sm font-semibold">${room?.price} / gecə</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2 mt-2">
+                      <span className="text-sm font-semibold">Cəmi:</span>
+                      <span className="text-lg font-bold text-indigo-600">${totalPrice}</span>
+                    </div>
                   </div>
                 )}
                 <button 
                   type="submit" 
                   className="btn btn-gold w-full"
-                  disabled={reserving || !startDate || !endDate}
+                  disabled={reserving || !startDate || !endDate || nights === 0}
                 >
-                  {reserving ? 'Rezerv edilir...' : 'Rezerv et'}
+                  {reserving ? 'Rezerv edilir...' : `Rezerv et - $${totalPrice}`}
                 </button>
               </form>
               {!user && (

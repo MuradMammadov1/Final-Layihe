@@ -4,8 +4,10 @@ import SiteHeader from './components/SiteHeader'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import RoomDetails from './pages/RoomDetails'
+import HotelDetails from './pages/HotelDetails'
 import About from './pages/About'
 import Rooms from './pages/Rooms'
+import Hotels from './pages/Hotels'
 import Services from './pages/Services'
 import Gallery from './pages/Gallery'
 import FAQ from './pages/FAQ'
@@ -64,6 +66,8 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/hotels" element={<Hotels />} />
+            <Route path="/hotels/:id" element={<HotelDetails />} />
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/:id" element={<RoomDetails />} />
             <Route path="/special-offers" element={<SpecialOffers />} />
