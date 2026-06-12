@@ -13,13 +13,13 @@ import Gallery from './pages/Gallery'
 import FAQ from './pages/FAQ'
 import SpecialOffers from './pages/SpecialOffers'
 import Blog from './pages/Blog'
+import BlogDetail from './pages/BlogDetail'
 import Contact from './pages/Contact'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import Profile from './pages/Profile'
-import Wishlist from './pages/Wishlist'
+import AdminLogin from './pages/AdminLogin'
 import AdminLayout from './pages/Admin/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard'
 import HotelManager from './pages/Admin/HotelManager'
@@ -42,14 +42,12 @@ function MainShell({ children }) {
   const fullBleed =
     pathname === '/' ||
     pathname === '/contact' ||
-    pathname === '/login' ||
-    pathname === '/register' ||
-    pathname === '/profile' ||
     pathname === '/gallery' ||
     pathname === '/about' ||
     pathname === '/rooms' ||
     pathname === '/rooms/:id' ||
-    pathname === '/blog'
+    pathname === '/blog' ||
+    pathname === '/blog/:id'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
       {children}
@@ -75,14 +73,15 @@ export default function App() {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/admin-panel" element={<AdminGuard><AdminLayout /></AdminGuard>}>
               <Route index element={<Dashboard />} />
               <Route path="hotels" element={<HotelManager />} />
               <Route path="rooms" element={<RoomManager />} />

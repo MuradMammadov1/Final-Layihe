@@ -1,16 +1,14 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
-import { AuthContext } from '../context/AuthContext'
 import { getApiErrorMessage } from '../utils/apiError'
 
 export default function Register(){
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [name, setName] = useState('Demo User')
+  const [email, setEmail] = useState('demo@example.com')
+  const [password, setPassword] = useState('demo123')
   const [error, setError] = useState('')
   const navigate = useNavigate()
-  const { setUser } = useContext(AuthContext)
 
   const submit = async e => {
     e.preventDefault()
@@ -22,12 +20,6 @@ export default function Register(){
         password
       })
       localStorage.setItem('token', res.data.token)
-      setUser({
-        _id: res.data._id,
-        name: res.data.name,
-        email: res.data.email,
-        role: res.data.role || 'user'
-      })
       navigate('/profile')
     } catch (err) {
       setError(getApiErrorMessage(err, 'Qeydiyyat alınmadı.'))

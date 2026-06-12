@@ -1,31 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import api from '../api'
+import React, { useState } from 'react'
 
 export default function Gallery() {
-  const [galleryItems, setGalleryItems] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(null)
 
-  useEffect(() => {
-    loadGallery()
-    const interval = setInterval(loadGallery, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const loadGallery = async () => {
-    try {
-      const res = await api.get('/gallery')
-      setGalleryItems(res.data.data || [])
-    } catch {
-      setGalleryItems([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const demoGalleryItems = galleryItems.length ? galleryItems : [
+  const galleryItems = [
     { _id: '1', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800', title: 'Lüks Otaq', category: 'rooms', description: 'Müasir və zərif otaq dizaynı' },
     { _id: '2', image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800', title: 'Restoran', category: 'dining', description: 'Azərbaycan və beynəlxalq mətbəx' },
     { _id: '3', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800', title: 'Hovuz', category: 'pool', description: 'Açıq və qapalı hovuz kompleksi' },
@@ -37,8 +16,8 @@ export default function Gallery() {
   ]
 
   const filteredItems = selectedCategory === 'all'
-    ? demoGalleryItems
-    : demoGalleryItems.filter(item => item.category === selectedCategory)
+    ? galleryItems
+    : galleryItems.filter(item => item.category === selectedCategory)
 
   return (
     <div className="page-gallery">
@@ -94,9 +73,7 @@ export default function Gallery() {
           </button>
         </div>
 
-        {loading ? (
-          <div className="panel text-center">Yüklənir...</div>
-        ) : filteredItems.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <div className="panel text-center">Şəkil tapılmadı.</div>
         ) : (
           <div className="gallery-grid">

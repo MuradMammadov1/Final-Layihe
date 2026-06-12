@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { AuthContext } from '../context/AuthContext'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 
 export default function Navbar() {
@@ -12,14 +11,7 @@ export default function Navbar() {
     setMenuOpen(false)
   }, [pathname])
 
-  const { user, loading, logout } = useContext(AuthContext)
-  const navigate = useNavigate()
   const onHome = pathname === '/'
-
-  const doLogout = () => {
-    logout()
-    navigate('/')
-  }
 
   return (
     <nav className={`navbar ${onHome ? 'navbar--overlay' : ''}`}>
@@ -45,17 +37,7 @@ export default function Navbar() {
           <Link to="/faq" className="nav-link-pill">FAQ</Link>
           <Link to="/blog" className="nav-link-pill">Bloq</Link>
           <Link to="/contact" className="nav-link-pill">Əlaqə</Link>
-          {!loading && user ? (
-            <>
-              <Link to="/profile" className="nav-link-pill">{user.name}</Link>
-              <button onClick={doLogout} className="btn btn-outline-gold btn-sm">Çıxış</button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="nav-link-pill">Daxil ol</Link>
-              <Link to="/register" className="btn btn-gold btn-sm">Qeydiyyat</Link>
-            </>
-          )}
+          <Link to="/register" className="btn btn-gold btn-sm">Qeydiyyat</Link>
           <button onClick={toggleDarkMode} className="btn secondary btn-sm">
             {darkMode ? '☀️ Işıqlı' : '🌙 Qaranlıq'}
           </button>

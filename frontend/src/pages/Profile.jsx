@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
-import { AuthContext } from '../context/AuthContext'
 
 export default function Profile(){
-  const { user, loading, logout, reload } = useContext(AuthContext)
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [reservations, setReservations] = useState([])
   const [wishlist, setWishlist] = useState([])
   const [message, setMessage] = useState('')
@@ -14,21 +14,40 @@ export default function Profile(){
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login')
-      return
-    }
+    const loadProfile = async () => {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+      console.log('Profile token check:', !!token)
+      
+      if (!token) {
+        navigate('/login')
+        return
+      }
 
-    if (user) {
-      api.get('/reservation/user')
-        .then(res => setReservations(res.data.data || []))
-        .catch(() => setReservations([]))
+      try {
+        const res = await api.get('/auth/me')
+        setUser(res.data.data)
 
-      api.get('/wishlist')
-        .then(res => setWishlist(res.data.data || []))
-        .catch(() => setWishlist([]))
+        api.get('/reservation/user')
+          .then(res => setReservations(res.data.data || []))
+          .catch(() => setReservations([]))
+
+        api.get('/wishlist')
+          .then(res => setWishlist(res.data.data || []))
+          .catch(() => setWishlist([]))
+      } catch (err) {
+        console.log('Profile load error:', err)
+        navigate('/login')
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [user, loading, navigate])
+    loadProfile()
+  }, [navigate])
+
+  const logout = () => {
+    localStorage.removeItem('token')
+    navigate('/')
+  }
 
   const cancelReservation = async id => {
     try {
@@ -45,7 +64,6 @@ export default function Profile(){
       await api.delete(`/wishlist/${hotelId}`)
       setWishlist(prev => prev.filter(h => h._id !== hotelId))
       setMessage('Seçilmişlərdən silindi.')
-      await reload()
     } catch (err) {
       setMessage('Seçilmişlərdən silinmədi.')
     }
@@ -62,7 +80,8 @@ export default function Profile(){
     setUpdateLoading(true)
     try {
       await api.put('/auth/me', editForm)
-      await reload()
+      const res = await api.get('/auth/me')
+      setUser(res.data.data)
       setEditing(false)
       setMessage('Profil yeniləndi.')
     } catch (err) {

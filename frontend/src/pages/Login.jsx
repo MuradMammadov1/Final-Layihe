@@ -1,15 +1,13 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
-import { AuthContext } from '../context/AuthContext'
 import { getApiErrorMessage } from '../utils/apiError'
 
 export default function Login(){
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('demo@example.com')
+  const [password, setPassword] = useState('demo123')
   const [error, setError] = useState('')
   const navigate = useNavigate()
-  const { setUser } = useContext(AuthContext)
 
   const submit = async e => {
     e.preventDefault()
@@ -17,12 +15,6 @@ export default function Login(){
     try {
       const res = await api.post('/auth/login', { email: email.trim(), password })
       localStorage.setItem('token', res.data.token)
-      setUser({
-        _id: res.data._id,
-        name: res.data.name,
-        email: res.data.email,
-        role: res.data.role
-      })
       navigate(res.data.role === 'admin' ? '/admin' : '/profile')
     } catch (err) {
       setError(getApiErrorMessage(err, 'Daxil olmaq mümkün olmadı.'))

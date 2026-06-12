@@ -1,29 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import api from '../api'
 import { HOME_NEWS } from '../data/siteContent'
 
 export default function Blog() {
-  const [blogs, setBlogs] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const loadBlogs = async () => {
-      try {
-        const res = await api.get('/blog')
-        setBlogs(res.data.data || [])
-      } catch {
-        setBlogs([])
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadBlogs()
-    const interval = setInterval(loadBlogs, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const demoBlogs = blogs.length ? blogs : HOME_NEWS.map((item, idx) => ({
+  const blogs = HOME_NEWS.map((item, idx) => ({
     _id: `demo-${idx}`,
     title: item.title,
     excerpt: item.excerpt,
@@ -54,24 +34,20 @@ export default function Blog() {
             Səyahət təcrübənizi artırmaq üçün faydalı məsləhətlər və məlumatlar.
           </p>
         </div>
-        {loading ? (
-          <div className="panel text-center">Yüklənir...</div>
-        ) : (
-          <div className="news-grid">
-            {demoBlogs.map(blog => (
-              <article key={blog._id} className="news-card">
-                {blog.image && <img src={blog.image} alt={blog.title} className="news-card-image" />}
-                <div className="news-card-body">
-                  <span className="news-card-tag">{blog.category}</span>
-                  <h3 className="news-card-title">{blog.title}</h3>
-                  <p className="text-gray-600 text-sm">{blog.excerpt}</p>
-                  <div className="news-card-meta">{blog.author} - {new Date(blog.createdAt).toLocaleDateString('az-AZ')}</div>
-                  <Link to={`/blog/${blog.slug || blog._id}`} className="news-card-link">Oxu →</Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <div className="news-grid">
+          {blogs.map(blog => (
+            <article key={blog._id} className="news-card">
+              {blog.image && <img src={blog.image} alt={blog.title} className="news-card-image" />}
+              <div className="news-card-body">
+                <span className="news-card-tag">{blog.category}</span>
+                <h3 className="news-card-title">{blog.title}</h3>
+                <p className="text-gray-600 text-sm">{blog.excerpt}</p>
+                <div className="news-card-meta">{blog.author} - {new Date(blog.createdAt).toLocaleDateString('az-AZ')}</div>
+                <Link to={`/blog/${blog.slug || blog._id}`} className="news-card-link">Oxu →</Link>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="section-pad section-muted">

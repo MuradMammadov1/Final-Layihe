@@ -1,26 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import api from '../api'
 
 export default function Services() {
-  const [services, setServices] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const res = await api.get('/services')
-        setServices(res.data.data || [])
-      } catch {
-        setServices([])
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadServices()
-  }, [])
-
-  const demoServices = services.length ? services : [
+  const services = [
     { icon: '🏨', title: 'Lüks Otaqlar', description: 'Geniş və rahat otaqlar, müasir avadanlıqlar və gözəl mənzərə ilə təchiz olunub.' },
     { icon: '🍽️', title: 'Restoran', description: 'Azərbaycan və beynəlxalq mətbəxi ilə zəngin menyu, peşəkar aşpazlar.' },
     { icon: '🏊', title: 'Üzmə Hovuzu', description: 'İsti və soyuq hovuzlar, spa və wellness mərkəzi.' },
@@ -46,19 +28,15 @@ export default function Services() {
       </section>
 
       <section className="container section-pad">
-        {loading ? (
-          <div className="panel text-center">Yüklənir...</div>
-        ) : (
-          <div className="services-grid">
-            {demoServices.map((service, idx) => (
-              <div key={service._id || idx} className="service-card panel">
-                <span className="service-icon" aria-hidden>{service.icon}</span>
-                <h3 className="service-title">{service.title}</h3>
-                <p className="service-description">{service.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="services-grid">
+          {services.map((service, idx) => (
+            <div key={idx} className="service-card panel">
+              <span className="service-icon" aria-hidden>{service.icon}</span>
+              <h3 className="service-title">{service.title}</h3>
+              <p className="service-description">{service.description}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="section-muted section-pad">

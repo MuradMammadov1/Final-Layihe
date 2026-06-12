@@ -26,16 +26,7 @@ export default function Hotels(){
       setHotels(res.data.data || [])
       setTotalPages(res.data.pagination?.pages || 1)
     } catch (err) {
-      // Demo otel məlumatları
-      const demoHotels = [
-        { _id: 'demo-1', name: 'Aura Grand Hotel', city: 'Bakı', price: 150, rating: 4.5, images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'], description: 'Lüks və rahat qonaqlıq təcrübəsi.' },
-        { _id: 'demo-2', name: 'Royal Palace Hotel', city: 'Bakı', price: 200, rating: 4.8, images: ['https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800'], description: 'Şəhər mərkəzində lüks otel.' },
-        { _id: 'demo-3', name: 'Caspian Resort', city: 'Quba', price: 120, rating: 4.3, images: ['https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800'], description: 'Təbiət mərkəzində istirahət.' },
-        { _id: 'demo-4', name: 'Mountain View Hotel', city: 'Qəbələ', price: 180, rating: 4.6, images: ['https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800'], description: 'Dağ mənzərəsi ilə otel.' },
-        { _id: 'demo-5', name: 'Seaside Resort', city: 'Lənkəran', price: 160, rating: 4.4, images: ['https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800'], description: 'Dəniz kənarında istirahət.' },
-        { _id: 'demo-6', name: 'City Center Inn', city: 'Bakı', price: 100, rating: 4.2, images: ['https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800'], description: 'Şəhər mərkəzində rahat otaqlar.' }
-      ]
-      setHotels(demoHotels)
+      setHotels([])
       setTotalPages(1)
     } finally {
       setLoading(false)

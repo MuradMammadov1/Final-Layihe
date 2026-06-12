@@ -1,28 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { ABOUT_IMAGE } from '../data/images'
-import { HOME_STATS, HOME_SERVICES } from '../data/siteContent'
-import api from '../api'
+import { HOME_STATS } from '../data/siteContent'
 
 export default function About() {
-  const [about, setAbout] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const loadAbout = async () => {
-      try {
-        const res = await api.get('/about')
-        setAbout(res.data.data)
-      } catch {
-        setAbout(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadAbout()
-  }, [])
-
-  const displayAbout = about || {
+  const about = {
     title: 'Haqqımızda',
     subtitle: 'Aura Grand Hotel — lüks və rahat qonaqlıq təcrübəsi.',
     description: 'Aura Grand Hotel 1998-ci ildən bəri Azərbaycanın otel sənayesində lider kimi fəaliyyət göstərir.',
@@ -33,8 +15,6 @@ export default function About() {
     stats: HOME_STATS
   }
 
-  if (loading) return <div className="panel text-center py-12">Yüklənir...</div>
-
   return (
     <div className="page-about">
       <section className="page-hero page-hero--compact">
@@ -44,19 +24,19 @@ export default function About() {
             <span>/</span>
             <span>Haqqımızda</span>
           </nav>
-          <h1 className="page-hero-title">{displayAbout.title}</h1>
-          <p className="page-hero-sub">{displayAbout.subtitle}</p>
+          <h1 className="page-hero-title">{about.title}</h1>
+          <p className="page-hero-sub">{about.subtitle}</p>
         </div>
       </section>
 
       <section className="section-pad container">
         <div className="split-feature">
-          <img src={displayAbout.image} alt="Haqqımızda" className="split-feature-img" />
+          <img src={about.image} alt="Haqqımızda" className="split-feature-img" />
           <div className="split-feature-content">
             <span className="section-label">Tariximiz</span>
             <h2 className="section-heading">25+ illik təcrübə</h2>
-            <p className="text-gray-600 mt-4">{displayAbout.history}</p>
-            <p className="text-gray-600 mt-4">{displayAbout.description}</p>
+            <p className="text-gray-600 mt-4">{about.history}</p>
+            <p className="text-gray-600 mt-4">{about.description}</p>
           </div>
         </div>
       </section>
@@ -68,7 +48,7 @@ export default function About() {
             <h2 className="section-heading">Rəqəmlərlə</h2>
           </div>
           <div className="stats-grid">
-            {(displayAbout.stats?.length ? displayAbout.stats : HOME_STATS).map((stat, idx) => (
+            {about.stats.map((stat, idx) => (
               <div key={idx} className="stat-card panel">
                 <div className="stat-value">{stat.value}</div>
                 <div className="stat-label">{stat.label}</div>
@@ -84,8 +64,8 @@ export default function About() {
           <h2 className="section-heading">Nə təklif edirik</h2>
         </div>
         <div className="panel text-center max-w-3xl mx-auto">
-          <p className="text-gray-600">{displayAbout.mission}</p>
-          <p className="text-gray-600 mt-4">{displayAbout.vision}</p>
+          <p className="text-gray-600">{about.mission}</p>
+          <p className="text-gray-600 mt-4">{about.vision}</p>
         </div>
       </section>
 

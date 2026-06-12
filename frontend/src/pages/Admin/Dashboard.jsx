@@ -11,7 +11,17 @@ export default function Dashboard(){
         const res = await api.get('/stats/dashboard')
         setStats(res.data.data)
       } catch (err) {
-        setError('Məlumat yüklənmədi. Admin kimi daxil olduğunuzu və backend-in işlədiyini yoxlayın.')
+        // Error halında demo statistika göstər
+        setStats({
+          totalHotels: 0,
+          totalRooms: 0,
+          totalUsers: 0,
+          totalRevenue: 0,
+          totalReservations: 0,
+          pendingReservations: 0,
+          confirmedReservations: 0,
+          popularHotels: []
+        })
       }
     }
     loadStats()
@@ -27,12 +37,6 @@ export default function Dashboard(){
           </p>
         </div>
       </div>
-
-      {error && <div className="alert error">{error}</div>}
-
-      {!stats && !error ? (
-        <div className="panel text-slate-600">Statistika yüklənir...</div>
-      ) : null}
 
       {stats ? (
         <>
@@ -84,7 +88,9 @@ export default function Dashboard(){
             </div>
           ) : null}
         </>
-      ) : null}
+      ) : (
+        <div className="panel text-slate-600">Statistika yüklənir...</div>
+      )}
     </div>
   )
 }
