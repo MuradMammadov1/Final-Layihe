@@ -10,7 +10,8 @@ export default function Blog() {
     image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
     category: item.tag,
     author: 'Admin',
-    createdAt: item.date
+    createdAt: item.date,
+    slug: `blog-${idx}`
   }))
 
   return (

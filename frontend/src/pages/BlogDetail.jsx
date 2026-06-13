@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { HOME_NEWS } from '../data/siteContent'
 import api from '../api'
 
 export default function BlogDetail() {
@@ -20,7 +21,22 @@ export default function BlogDetail() {
           const res = await api.get(`/blog/${id}`)
           setBlog(res.data.data)
         } catch {
-          setBlog(null)
+          // Backend-də tapılmadısa, fallback data istifadə edirik
+          const newsItem = HOME_NEWS.find((item, idx) => `blog-${idx}` === id || `demo-${idx}` === id)
+          if (newsItem) {
+            setBlog({
+              _id: id,
+              title: newsItem.title,
+              excerpt: newsItem.excerpt,
+              content: newsItem.excerpt,
+              image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+              category: newsItem.tag,
+              author: 'Admin',
+              createdAt: newsItem.date
+            })
+          } else {
+            setBlog(null)
+          }
         }
       } finally {
         setLoading(false)
