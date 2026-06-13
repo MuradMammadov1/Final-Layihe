@@ -12,6 +12,7 @@ import Services from './pages/Services'
 import Gallery from './pages/Gallery'
 import FAQ from './pages/FAQ'
 import SpecialOffers from './pages/SpecialOffers'
+import SpecialOfferDetail from './pages/SpecialOfferDetail'
 import Blog from './pages/Blog'
 import BlogDetail from './pages/BlogDetail'
 import Contact from './pages/Contact'
@@ -47,7 +48,9 @@ function MainShell({ children }) {
     pathname === '/rooms' ||
     pathname === '/rooms/:id' ||
     pathname === '/blog' ||
-    pathname === '/blog/:id'
+    pathname === '/blog/:id' ||
+    pathname === '/special-offers' ||
+    pathname === '/special-offers/:id'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
       {children}
@@ -69,6 +72,7 @@ export default function App() {
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/rooms/:id" element={<RoomDetails />} />
             <Route path="/special-offers" element={<SpecialOffers />} />
+            <Route path="/special-offers/:id" element={<SpecialOfferDetail />} />
             <Route path="/services" element={<Services />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/faq" element={<FAQ />} />

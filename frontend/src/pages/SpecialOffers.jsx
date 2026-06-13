@@ -60,7 +60,7 @@ export default function SpecialOffers() {
                   <div className="offer-meta">
                     <span className="offer-valid">Bitiş tarixi: {offer.validUntil}</span>
                   </div>
-                  <Link to="/rooms" className="btn btn-gold w-full mt-4">İndi rezerv et</Link>
+                  <Link to={`/special-offers/${offer._id}`} className="btn btn-gold w-full mt-4">Ətraflı bax</Link>
                 </div>
               </div>
             ))}

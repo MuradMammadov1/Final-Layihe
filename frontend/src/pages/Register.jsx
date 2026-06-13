@@ -20,7 +20,7 @@ export default function Register(){
         password
       })
       localStorage.setItem('token', res.data.token)
-      navigate('/profile')
+      navigate('/login')
     } catch (err) {
       setError(getApiErrorMessage(err, 'Qeydiyyat alınmadı.'))
     }
