@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import api from '../api'
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('')
@@ -7,20 +8,22 @@ export default function AdminLogin() {
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
     setError('')
 
-    // Sadə admin yoxlaması
-    console.log('Username:', username.trim())
-    console.log('Password:', password.trim())
-    console.log('Checking:', username.trim() === 'admin', password.trim() === 'admin123')
-    
-    if (username.trim() === 'admin' && password.trim() === 'admin123') {
-      localStorage.setItem('adminLoggedIn', 'true')
-      navigate('/admin-panel')
-    } else {
-      setError('Ad və ya şifrə yanlışdır')
+    try {
+      const res = await api.post('/auth/login', { email: username, password })
+      if (res.data.role === 'admin') {
+        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('adminLoggedIn', 'true')
+        navigate('/admin-panel')
+        window.location.reload()
+      } else {
+        setError('Siz admin deyilsiniz')
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Ad və ya şifrə yanlışdır')
     }
   }
 

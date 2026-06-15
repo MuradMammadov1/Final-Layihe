@@ -6,9 +6,8 @@ const sendEmail = require('../utils/sendEmail');
 const emailService = require('../utils/emailService');
 
 const buildDateOverlap = (startDate, endDate) => ({
-    $or: [
-        { startDate: { $lte: endDate }, endDate: { $gte: startDate } }
-    ]
+    startDate: { $lt: endDate },
+    endDate: { $gt: startDate }
 });
 
 const checkRoomAvailability = async (roomId, startDate, endDate, quantity = 1) => {

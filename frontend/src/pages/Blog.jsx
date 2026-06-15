@@ -1,18 +1,35 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../api'
 import { HOME_NEWS } from '../data/siteContent'
 
 export default function Blog() {
-  const blogs = HOME_NEWS.map((item, idx) => ({
+  const [dbBlogs, setDbBlogs] = useState([])
+  
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await api.get('/blog')
+        setDbBlogs(res.data.data || [])
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchBlogs()
+  }, [])
+
+  const defaultBlogs = HOME_NEWS.map((item, idx) => ({
     _id: `demo-${idx}`,
     title: item.title,
     excerpt: item.excerpt,
     image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
     category: item.tag,
     author: 'Admin',
-    createdAt: item.date,
+    createdAt: new Date().toISOString(),
     slug: `blog-${idx}`
   }))
+
+  const blogs = dbBlogs.length > 0 ? dbBlogs : defaultBlogs
 
   return (
     <div className="page-blog">

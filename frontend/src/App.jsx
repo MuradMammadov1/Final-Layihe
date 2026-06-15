@@ -20,6 +20,7 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Profile from './pages/Profile'
 import AdminLogin from './pages/AdminLogin'
 import AdminLayout from './pages/Admin/AdminLayout'
 import Dashboard from './pages/Admin/Dashboard'
@@ -50,7 +51,10 @@ function MainShell({ children }) {
     pathname === '/blog' ||
     pathname === '/blog/:id' ||
     pathname === '/special-offers' ||
-    pathname === '/special-offers/:id'
+    pathname === '/special-offers/:id' ||
+    pathname === '/profile' ||
+    pathname === '/login' ||
+    pathname === '/register'
   return (
     <main className={fullBleed ? 'main-full' : 'main-contained container mx-auto px-4 py-6'}>
       {children}
@@ -83,6 +87,7 @@ export default function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin-panel" element={<AdminGuard><AdminLayout /></AdminGuard>}>

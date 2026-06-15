@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
+import { AuthContext } from '../context/AuthContext'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const { darkMode, toggleDarkMode } = useTheme()
+  const { user } = useContext(AuthContext)
 
   useEffect(() => {
     setMenuOpen(false)
@@ -37,7 +39,18 @@ export default function Navbar() {
           <Link to="/faq" className="nav-link-pill">FAQ</Link>
           <Link to="/blog" className="nav-link-pill">Bloq</Link>
           <Link to="/contact" className="nav-link-pill">Əlaqə</Link>
-          <Link to="/register" className="btn btn-gold btn-sm">Qeydiyyat</Link>
+          
+          {user ? (
+            <Link to="/profile" className="btn btn-gold btn-sm">
+              {user.name} (Profil)
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link-pill">Daxil ol</Link>
+              <Link to="/register" className="btn btn-gold btn-sm">Qeydiyyat</Link>
+            </>
+          )}
+
           <button onClick={toggleDarkMode} className="btn secondary btn-sm">
             {darkMode ? '☀️ Işıqlı' : '🌙 Qaranlıq'}
           </button>

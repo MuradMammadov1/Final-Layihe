@@ -11,7 +11,11 @@ export default function RoomManager(){
   const loadHotels = async () => {
     try {
       const res = await api.get('/hotels')
-      setHotels(res.data.data || [])
+      const fetchedHotels = res.data.data || []
+      setHotels(fetchedHotels)
+      if (fetchedHotels.length > 0) {
+        setForm(prev => ({ ...prev, hotel: fetchedHotels[0]._id }))
+      }
     } catch {
       setHotels([])
     }
@@ -45,7 +49,7 @@ export default function RoomManager(){
     }
     try {
       const payload = {
-        hotel: form.hotel,
+        hotel: form.hotel || hotels[0]?._id,
         title: form.title,
         price: priceValue,
         capacity: Number(form.capacity),
@@ -61,7 +65,7 @@ export default function RoomManager(){
         await api.post('/rooms', payload)
         setMessage('Otaq yaradıldı.')
       }
-      setForm({ hotel: form.hotel, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
+      setForm({ hotel: form.hotel || hotels[0]?._id, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
       setEditingId(null)
       loadRooms()
     } catch (err) {
@@ -84,7 +88,7 @@ export default function RoomManager(){
   }
 
   const handleCancelEdit = () => {
-    setForm({ hotel: form.hotel, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
+    setForm({ hotel: form.hotel || hotels[0]?._id, title: '', price: '', capacity: '', count: '', type: '', description: '', amenities: '' })
     setEditingId(null)
   }
 
@@ -109,15 +113,6 @@ export default function RoomManager(){
         {message && <div className="alert mt-4">{message}</div>}
 
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 mt-6">
-          <div>
-            <label className="block text-sm font-medium">Otel</label>
-            <select name="hotel" value={form.hotel} onChange={handleChange} className="input" required>
-              <option value="">Otel seçin</option>
-              {hotels.map(hotel => (
-                <option key={hotel._id} value={hotel._id}>{hotel.name} — {hotel.city}</option>
-              ))}
-            </select>
-          </div>
           <div>
             <label className="block text-sm font-medium">Otaq adı</label>
             <input name="title" value={form.title} onChange={handleChange} className="input" required />
@@ -156,7 +151,7 @@ export default function RoomManager(){
       <div className="panel">
         <h3 className="text-xl font-semibold mb-4">Existing Rooms</h3>
         {rooms.length === 0 ? (
-          <p className="text-gray-600">Otel seçin ki, otaqları görəsiniz.</p>
+          <p className="text-gray-600">Hələ otaq yoxdur.</p>
         ) : (
           <div className="space-y-4">
             {rooms.map(room => (

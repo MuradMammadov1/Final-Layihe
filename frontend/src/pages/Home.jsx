@@ -11,19 +11,27 @@ import { HOME_NEWS, HOME_SERVICES, HOME_STATS } from '../data/siteContent'
 export default function Home() {
   const [rooms, setRooms] = useState([])
   const [testimonials, setTestimonials] = useState([])
+  const [blogs, setBlogs] = useState([])
+  const [services, setServices] = useState([])
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [roomsRes, testimonialsRes] = await Promise.all([
+        const [roomsRes, testimonialsRes, blogsRes, servicesRes] = await Promise.all([
           api.get('/rooms'),
-          api.get('/testimonials')
+          api.get('/testimonials'),
+          api.get('/blog'),
+          api.get('/services')
         ])
         setRooms((roomsRes.data.data || []).slice(0, 6))
         setTestimonials(testimonialsRes.data.data || [])
+        setBlogs((blogsRes.data.data || []).slice(0, 3))
+        setServices(servicesRes.data.data || [])
       } catch {
         setRooms([])
         setTestimonials([])
+        setBlogs([])
+        setServices([])
       }
     }
     loadData()
@@ -100,10 +108,10 @@ export default function Home() {
         <h2 className="section-heading">Qonaq təcrübəsi</h2>
       </div>
       <div className="services-grid">
-        {HOME_SERVICES.map(s => (
-          <article key={s.title} className="service-card">
+        {(services.length > 0 ? services : HOME_SERVICES).map((s, idx) => (
+          <article key={s._id || s.title || idx} className="service-card">
             <h3>{s.title}</h3>
-            <p className="text-gray-600 mb-0">{s.text}</p>
+            <p className="text-gray-600 mb-0">{s.text || s.description}</p>
           </article>
         ))}
       </div>
@@ -163,14 +171,14 @@ export default function Home() {
           </p>
         </div>
         <div className="news-grid">
-          {HOME_NEWS.map(item => (
-            <article key={item.title} className="news-card">
+          {(blogs.length > 0 ? blogs : HOME_NEWS).map((item, idx) => (
+            <article key={item._id || item.title || idx} className="news-card">
               <div className="news-card-body">
-                <span className="news-card-tag">{item.tag}</span>
+                <span className="news-card-tag">{item.category || item.tag}</span>
                 <h3 className="news-card-title">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.excerpt}</p>
-                <div className="news-card-meta">{item.date}</div>
-                <Link to={item.link} className="news-card-link">Oxu →</Link>
+                <p className="text-gray-600 text-sm">{item.excerpt || (item.content ? item.content.substring(0, 100) + '...' : '')}</p>
+                <div className="news-card-meta">{item.date || new Date(item.createdAt).toLocaleDateString('az-AZ')}</div>
+                <Link to={item.link || `/blog/${item.slug || item._id}`} className="news-card-link">Oxu →</Link>
               </div>
             </article>
           ))}

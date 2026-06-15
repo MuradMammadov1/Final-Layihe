@@ -1,10 +1,27 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ABOUT_IMAGE } from '../data/images'
 import { HOME_STATS } from '../data/siteContent'
+import api from '../api'
 
 export default function About() {
-  const about = {
+  const [dbAbout, setDbAbout] = useState(null)
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const res = await api.get('/about')
+        // about route returns an array of abouts or a single about object? Let's assume single object or first item
+        const data = Array.isArray(res.data.data) ? res.data.data[0] : res.data.data
+        if (data) setDbAbout(data)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    fetchAbout()
+  }, [])
+
+  const defaultAbout = {
     title: 'Haqqımızda',
     subtitle: 'Aura Grand Hotel — lüks və rahat qonaqlıq təcrübəsi.',
     description: 'Aura Grand Hotel 1998-ci ildən bəri Azərbaycanın otel sənayesində lider kimi fəaliyyət göstərir.',
@@ -14,6 +31,8 @@ export default function About() {
     image: ABOUT_IMAGE,
     stats: HOME_STATS
   }
+
+  const about = dbAbout || defaultAbout
 
   return (
     <div className="page-about">
