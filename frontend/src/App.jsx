@@ -36,6 +36,7 @@ import BlogManager from './pages/Admin/BlogManager'
 import AboutManager from './pages/Admin/AboutManager'
 import TestimonialManager from './pages/Admin/TestimonialManager'
 import GalleryManager from './pages/Admin/GalleryManager'
+import ContactManager from './pages/Admin/ContactManager'
 import AdminGuard from './components/AdminGuard'
 import { ThemeProvider } from './context/ThemeContext'
 
@@ -104,6 +105,7 @@ export default function App() {
               <Route path="about" element={<AboutManager />} />
               <Route path="testimonials" element={<TestimonialManager />} />
               <Route path="gallery" element={<GalleryManager />} />
+              <Route path="contact" element={<ContactManager />} />
             </Route>
           </Routes>
         </MainShell>

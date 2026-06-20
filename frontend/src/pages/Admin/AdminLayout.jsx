@@ -77,6 +77,9 @@ export default function AdminLayout(){
           <NavLink to="/admin-panel/gallery" className={({ isActive }) => tabClass(isActive)}>
             Qalereya
           </NavLink>
+          <NavLink to="/admin-panel/contact" className={({ isActive }) => tabClass(isActive)}>
+            Əlaqə
+          </NavLink>
         </nav>
 
         <div className="mt-6">
