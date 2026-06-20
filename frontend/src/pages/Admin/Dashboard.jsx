@@ -89,39 +89,39 @@ export default function Dashboard(){
       <div className="panel">
         <h3 className="section-heading text-lg mb-4">Sürətli idarəetmə</h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Link to="/admin/about" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/about" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Haqqımızda</p>
             <p className="text-sm text-gray-500 mt-1">Haqqımızda məzmununu idarə et</p>
           </Link>
-          <Link to="/admin/services" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/services" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Xidmətlər</p>
             <p className="text-sm text-gray-500 mt-1">Xidmətləri idarə et</p>
           </Link>
-          <Link to="/admin/gallery" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/gallery" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Qalereya</p>
             <p className="text-sm text-gray-500 mt-1">Şəkilləri idarə et</p>
           </Link>
-          <Link to="/admin/faq" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/faq" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">FAQ</p>
             <p className="text-sm text-gray-500 mt-1">Sual-cavabı idarə et</p>
           </Link>
-          <Link to="/admin/blog" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/blog" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Bloq</p>
             <p className="text-sm text-gray-500 mt-1">Bloq yazılarını idarə et</p>
           </Link>
-          <Link to="/admin/hotels" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/hotels" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Otellər</p>
             <p className="text-sm text-gray-500 mt-1">Otelləri idarə et</p>
           </Link>
-          <Link to="/admin/rooms" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/rooms" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Otaqlar</p>
             <p className="text-sm text-gray-500 mt-1">Otaqları idarə et</p>
           </Link>
-          <Link to="/admin/reservations" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/reservations" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">Rezervasiyalar</p>
             <p className="text-sm text-gray-500 mt-1">Rezervasiyaları idarə et</p>
           </Link>
-          <Link to="/admin/users" className="feature-card hover:shadow-lg transition-shadow">
+          <Link to="/admin-panel/users" className="feature-card hover:shadow-lg transition-shadow">
             <p className="font-semibold">İstifadəçilər</p>
             <p className="text-sm text-gray-500 mt-1">İstifadəçiləri idarə et</p>
           </Link>
