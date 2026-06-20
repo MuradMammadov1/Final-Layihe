@@ -104,52 +104,59 @@ export default function RoomManager(){
   }
 
   return (
-    <div className="space-y-6">
+    <div className="admin-manager">
+      <h2 className="section-heading">Otaq İdarəetməsi</h2>
+
       <div className="panel">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-semibold">Room Management</h2>
-          <p className="text-gray-600">Create, manage, and delete rooms for your hotels from here.</p>
-        </div>
+        <h3 className="section-heading text-lg mb-4">Otaq Əlavə Et</h3>
         {message && <div className="alert mt-4">{message}</div>}
 
-        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2 mt-6">
+        <form onSubmit={handleSubmit} className="grid gap-4">
           <div>
-            <label className="block text-sm font-medium">Otaq adı</label>
-            <input name="title" value={form.title} onChange={handleChange} className="input" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Qiymət</label>
-            <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Nəfər sayı</label>
-            <input name="capacity" type="number" value={form.capacity} onChange={handleChange} className="input" required />
+            <label className="block text-sm font-medium mb-1">Otel</label>
+            <select name="hotel" value={form.hotel} onChange={handleChange} className="input" required>
+              {hotels.map(hotel => (
+                <option key={hotel._id} value={hotel._id}>{hotel.name}</option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="block text-sm font-medium">Say</label>
-            <input name="count" type="number" value={form.count} onChange={handleChange} className="input" required />
+            <label className="block text-sm font-medium mb-1">Otaq adı</label>
+            <input name="title" value={form.title} onChange={handleChange} className="input" placeholder="Standard Otaq" required />
           </div>
           <div>
-            <label className="block text-sm font-medium">Növ</label>
-            <input name="type" value={form.type} onChange={handleChange} className="input" placeholder="standard / deluxe" />
+            <label className="block text-sm font-medium mb-1">Qiymət ($/gecə)</label>
+            <input name="price" type="number" min="0" value={form.price} onChange={handleChange} className="input" placeholder="100" required />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium">Xidmətlər</label>
-            <input name="amenities" value={form.amenities} onChange={handleChange} className="input" placeholder="vergüllə ayrılmış" />
+          <div>
+            <label className="block text-sm font-medium mb-1">Nəfər sayı</label>
+            <input name="capacity" type="number" min="0" value={form.capacity} onChange={handleChange} className="input" placeholder="2" required />
           </div>
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium">Təsvir</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="input" />
+          <div>
+            <label className="block text-sm font-medium mb-1">Otaq sayı</label>
+            <input name="count" type="number" min="0" value={form.count} onChange={handleChange} className="input" placeholder="5" required />
           </div>
-          <div className="md:col-span-2 flex gap-2">
-            <button className="btn">{editingId ? 'Yenilə' : 'Yarat'}</button>
+          <div>
+            <label className="block text-sm font-medium mb-1">Növ</label>
+            <input name="type" value={form.type} onChange={handleChange} className="input" placeholder="Standard / Deluxe / Suite" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Xidmətlər (vergüllə ayrılmış)</label>
+            <input name="amenities" value={form.amenities} onChange={handleChange} className="input" placeholder="WiFi, TV, AC" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Təsvir</label>
+            <textarea name="description" value={form.description} onChange={handleChange} rows="4" className="input" placeholder="Otaq haqqında məlumat" />
+          </div>
+          <div className="flex gap-2">
+            <button className="btn btn-gold">{editingId ? 'Yenilə' : 'Əlavə et'}</button>
             {editingId && <button type="button" onClick={handleCancelEdit} className="btn secondary">Ləğv et</button>}
           </div>
         </form>
       </div>
 
       <div className="panel">
-        <h3 className="text-xl font-semibold mb-4">Existing Rooms</h3>
+        <h3 className="section-heading text-lg mb-4">Mövcud Otaqlar</h3>
         {rooms.length === 0 ? (
           <p className="text-gray-600">Hələ otaq yoxdur.</p>
         ) : (
@@ -159,7 +166,7 @@ export default function RoomManager(){
                 <div>
                   <h4 className="font-semibold">{room.title}</h4>
                   <p className="text-sm text-gray-600">{room.type} • {room.capacity} nəfər • {room.count} otaq</p>
-                  <p className="text-indigo-600 font-semibold mt-2">${room.price}</p>
+                  <p className="text-indigo-600 font-semibold mt-2">${room.price}/gecə</p>
                 </div>
                 <div className="flex gap-2">
                   <button className="btn secondary" onClick={() => handleEdit(room)}>Düzəlt</button>

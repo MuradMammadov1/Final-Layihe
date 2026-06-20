@@ -3,7 +3,7 @@ const Gallery = require('../models/Gallery');
 exports.getAllGallery = async (req, res, next) => {
     try {
         const { category } = req.query;
-        const query = { active: true };
+        const query = {};
         if (category) query.category = category;
         
         const galleryItems = await Gallery.find(query).sort({ order: 1 });
@@ -21,6 +21,18 @@ exports.getGalleryItem = async (req, res, next) => {
             return next(new Error('Gallery item tapılmadı'));
         }
         res.status(200).json({ success: true, data: galleryItem });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.uploadGalleryImage = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            res.status(400);
+            return next(new Error('Şəkil yüklənmədi'));
+        }
+        res.status(200).json({ success: true, url: req.file.path });
     } catch (error) {
         next(error);
     }

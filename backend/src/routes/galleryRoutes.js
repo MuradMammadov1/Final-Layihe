@@ -7,8 +7,12 @@ const {
     getGalleryItem,
     createGalleryItem,
     updateGalleryItem,
-    deleteGalleryItem
+    deleteGalleryItem,
+    uploadGalleryImage
 } = require('../controllers/galleryController');
+
+router.route('/upload')
+    .post(protect, authorize('admin'), upload.single('image'), uploadGalleryImage);
 
 router.route('/')
     .get(getAllGallery)

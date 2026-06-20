@@ -2,7 +2,16 @@ const SpecialOffer = require('../models/SpecialOffer');
 
 exports.getAllSpecialOffers = async (req, res, next) => {
     try {
-        const offers = await SpecialOffer.find({ active: true }).sort({ order: 1 });
+        const offers = await SpecialOffer.find({ active: true }).sort({ order: 1 }).populate('room', 'title type');
+        res.status(200).json({ success: true, data: offers });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.getAllSpecialOffersAdmin = async (req, res, next) => {
+    try {
+        const offers = await SpecialOffer.find().sort({ order: 1 }).populate('room', 'title type');
         res.status(200).json({ success: true, data: offers });
     } catch (error) {
         next(error);
@@ -11,7 +20,7 @@ exports.getAllSpecialOffers = async (req, res, next) => {
 
 exports.getSpecialOffer = async (req, res, next) => {
     try {
-        const offer = await SpecialOffer.findById(req.params.id);
+        const offer = await SpecialOffer.findById(req.params.id).populate('room', 'title type');
         if (!offer) {
             res.status(404);
             return next(new Error('Təklif tapılmadı'));
@@ -36,7 +45,7 @@ exports.updateSpecialOffer = async (req, res, next) => {
         const offer = await SpecialOffer.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
-        });
+        }).populate('room', 'title type');
         if (!offer) {
             res.status(404);
             return next(new Error('Təklif tapılmadı'));

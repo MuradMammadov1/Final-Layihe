@@ -3,22 +3,33 @@ import api from '../../api'
 
 export default function SpecialOfferManager() {
   const [offers, setOffers] = useState([])
+  const [rooms, setRooms] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true })
+  const [form, setForm] = useState({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true, room: '' })
 
   useEffect(() => {
     loadOffers()
+    loadRooms()
   }, [])
 
   const loadOffers = async () => {
     try {
-      const res = await api.get('/special-offers')
+      const res = await api.get('/special-offers/admin')
       setOffers(res.data.data || [])
     } catch {
       setOffers([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadRooms = async () => {
+    try {
+      const res = await api.get('/rooms')
+      setRooms(res.data.data || [])
+    } catch {
+      setRooms([])
     }
   }
 
@@ -30,7 +41,7 @@ export default function SpecialOfferManager() {
       } else {
         await api.post('/special-offers', form)
       }
-      setForm({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true })
+      setForm({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true, room: '' })
       setEditing(null)
       loadOffers()
     } catch (err) {
@@ -40,7 +51,7 @@ export default function SpecialOfferManager() {
 
   const handleEdit = offer => {
     setEditing(offer._id)
-    setForm({ title: offer.title, description: offer.description, discount: offer.discount, validUntil: offer.validUntil, image: offer.image, order: offer.order, active: offer.active })
+    setForm({ title: offer.title, description: offer.description, discount: offer.discount, validUntil: offer.validUntil, image: offer.image, order: offer.order, active: offer.active, room: offer.room || '' })
   }
 
   const handleDelete = async id => {
@@ -91,6 +102,15 @@ export default function SpecialOfferManager() {
             </div>
           </div>
           <div>
+            <label className="block text-sm font-medium mb-1">Otaq</label>
+            <select className="input" value={form.room} onChange={e => setForm(f => ({ ...f, room: e.target.value }))}>
+              <option value="">Otaq seçin (ixtiyari)</option>
+              {rooms.map(room => (
+                <option key={room._id} value={room._id}>{room.title} - {room.type}</option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium mb-1">Şəkil URL</label>
             <input className="input" value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} required />
           </div>
@@ -108,7 +128,7 @@ export default function SpecialOfferManager() {
           </div>
           <div className="flex gap-2">
             <button type="submit" className="btn btn-gold">{editing ? 'Yenilə' : 'Əlavə et'}</button>
-            {editing && <button type="button" onClick={() => { setEditing(null); setForm({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true }) }} className="btn btn-outline">Ləğv et</button>}
+            {editing && <button type="button" onClick={() => { setEditing(null); setForm({ title: '', description: '', discount: '', validUntil: '', image: '', order: 0, active: true, room: '' }) }} className="btn btn-outline">Ləğv et</button>}
           </div>
         </form>
       </div>
@@ -128,6 +148,11 @@ export default function SpecialOfferManager() {
                   <div className="text-sm">
                     <span className="font-bold">{o.discount}</span> - {o.validUntil}
                   </div>
+                  {o.room && (
+                    <div className="text-sm text-indigo-600">
+                      Otaq: {rooms.find(r => r._id === o.room)?.title || 'Bəlli deyil'}
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col gap-2">
                   <button onClick={() => handleToggleActive(o._id)} className={`btn btn-sm ${o.active ? 'btn-gold' : 'btn-outline'}`}>

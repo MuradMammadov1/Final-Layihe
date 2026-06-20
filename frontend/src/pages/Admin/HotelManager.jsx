@@ -119,7 +119,7 @@ export default function HotelManager(){
           </div>
           <div>
             <label className="block text-sm font-medium">Qiymət</label>
-            <input name="price" type="number" value={form.price} onChange={handleChange} className="input" required />
+            <input name="price" type="number" min="0" value={form.price} onChange={handleChange} className="input" required />
           </div>
           <div>
             <label className="block text-sm font-medium">Şəkil yüklə</label>

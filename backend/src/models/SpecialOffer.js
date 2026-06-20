@@ -21,6 +21,10 @@ const specialOfferSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  room: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Room'
+  },
   order: {
     type: Number,
     default: 0

@@ -6,7 +6,6 @@ export default function GalleryManager() {
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState({ title: '', category: 'other', image: '', description: '', order: 0, active: true })
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     loadGallery()
@@ -64,26 +63,6 @@ export default function GalleryManager() {
     }
   }
 
-  const handleImageUpload = async e => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    setUploading(true)
-    const formData = new FormData()
-    formData.append('image', file)
-
-    try {
-      const res = await api.post('/gallery/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-      setForm(prev => ({ ...prev, image: res.data.url || res.data.secure_url }))
-    } catch (err) {
-      alert('Şəkil yüklənmədi')
-    } finally {
-      setUploading(false)
-    }
-  }
-
   if (loading) return <div className="panel text-center">Yüklənir...</div>
 
   return (
@@ -110,14 +89,7 @@ export default function GalleryManager() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Şəkil URL</label>
-            <div className="flex gap-2">
-              <input className="input flex-1" value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} />
-              <label className="btn btn-outline-gold">
-                Yüklə
-                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-              </label>
-            </div>
-            {uploading && <p className="text-sm text-gray-500 mt-1">Yüklənir...</p>}
+            <input className="input" value={form.image} onChange={e => setForm(f => ({ ...f, image: e.target.value }))} required placeholder="https://example.com/image.jpg" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Təsvir</label>

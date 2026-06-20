@@ -3,6 +3,7 @@ const router = express.Router();
 const { protect, authorize } = require('../middleware/authMiddleware');
 const {
     getAllSpecialOffers,
+    getAllSpecialOffersAdmin,
     getSpecialOffer,
     createSpecialOffer,
     updateSpecialOffer,
@@ -12,6 +13,9 @@ const {
 router.route('/')
     .get(getAllSpecialOffers)
     .post(protect, authorize('admin'), createSpecialOffer);
+
+router.route('/admin')
+    .get(protect, authorize('admin'), getAllSpecialOffersAdmin);
 
 router.route('/:id')
     .get(getSpecialOffer)
